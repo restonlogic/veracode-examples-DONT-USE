@@ -1,9 +1,14 @@
 # Local .terraform directories
 **/.terraform/*
 
-# .tfstate files
+# terraform state files
+**/terraform.tfstate
+***/*.terraform*
+**/*.terraform*
+**/*.tfstate
 *.tfstate
-*.tfstate.*
+.terraform*
+.terraform.lock.hcl
 
 # Crash log files
 crash.log
@@ -27,3 +32,18 @@ override.tf.json
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
+
+# Ignore CLI configuration files
+*.terraformrc
+*terraform.rc
+*.terraform.lock.hcl
+
+*.json
+!docs/*
+
+*Pipfile
+*Pipfile.lock
+
+k3s_cluster/lambda/kube_cleaner.zip
+k3s_cluster/lambda/kube_cleaner_src/*
+!k3s_cluster/lambda/kube_cleaner_src/lambda.py
