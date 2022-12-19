@@ -1,2 +1,2 @@
-variable "cluster_config" {}
+variable "git_config" {}
 variable "global_config" {}
