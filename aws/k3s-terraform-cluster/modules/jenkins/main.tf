@@ -3,10 +3,10 @@ locals {
 
   jenkins_values_yaml = templatefile("${path.module}/templates/values.tpl",
     {
-      jenkins_admin_password = bcrypt(jsondecode(data.aws_secretsmanager_secret_version.jenkins_secrets.secret_string)["jenkins_admin_password"])
-      git_org_url           = "https://${var.git_config.gitops_address}/${var.git_config.gitops_org}"
+      jenkins_admin_password = jsondecode(data.aws_secretsmanager_secret_version.jenkins_secrets.secret_string)["jenkins-admin-password"]
       git_username          = jsondecode(data.aws_secretsmanager_secret_version.github_secrets.secret_string)["git-username"]
       git_access_token      = jsondecode(data.aws_secretsmanager_secret_version.github_secrets.secret_string)["git-token"]
+      gitops_org_url        = "https://${var.git_config.gitops_address}/${var.git_config.gitops_org}"
       gitops_full_url       = "https://${var.git_config.gitops_address}/${var.git_config.gitops_org}/${var.git_config.gitops_repo}.git"
       gitops_address        = var.git_config.gitops_address
       gitops_org            = var.git_config.gitops_org
@@ -33,7 +33,7 @@ resource "null_resource" "deploy" {
     command = <<EOT
         helm repo add jenkins https://charts.jenkins.io > /dev/null &&
         helm repo update &&
-        helm upgrade --wait --install jenkins jenkins/jenkins --namespace jenkins --create-namespace --version 4.1.16 -f ${local_file.values.filename}
+        helm upgrade --wait --install jenkins jenkins/jenkins --namespace jenkins --create-namespace --version 4.2.17 -f ${local_file.values.filename}
     EOT
   }
 }

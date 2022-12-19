@@ -10,7 +10,7 @@ pipelineJob("Initialize System") {
                         url("\${primary-repo}")
                     }
                 }
-                scriptPath("pipelines-as-code/jenkins/bootstrap/init/Jenkinsfile.groovy")
+                scriptPath("aws/k3s-terraform-cluster/pipelines-as-code/jenkins/bootstrap/init/Jenkinsfile.groovy")
             }
         }
     }

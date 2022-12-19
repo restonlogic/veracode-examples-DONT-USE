@@ -188,34 +188,34 @@ aws ssm put-parameter --name /tf/${NAME}/${ENVIRONMENT}/tfBucketName --overwrite
 
 if [ $action = "apply" ]; then
 
-    # Create Secrets
-    cd ${PWD}/secret-services
-    bash ./run.sh $action $git_user $git_token
-    cd ..
+    # # Create Secrets
+    # cd ${PWD}/secret-services
+    # bash ./run.sh $action $git_user $git_token
+    # cd ..
 
-    # Create Network
-    cd ${PWD}/network_services
-    bash ./run.sh $action
-    cd ..
+    # # Create Network
+    # cd ${PWD}/network_services
+    # bash ./run.sh $action
+    # cd ..
 
-    # Create K3s Cluster
-    cd ${PWD}/k3s_cluster
-    bash ./run.sh $action
-    cd ..
+    # # Create K3s Cluster
+    # cd ${PWD}/k3s_cluster
+    # bash ./run.sh $action
+    # cd ..
 
 
-    echo "sleepig for 2 min, waiting for k3s install to finish and get kubeconfig."
+    # echo "sleepig for 2 min, waiting for k3s install to finish and get kubeconfig."
 
-    sleep 2m
+    # sleep 2m
 
-    k3s_kubeconfig=/tmp/k3s_kubeconfig
-    aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
-    ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
-    k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
-    yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
-    export KUBECONFIG=$k3s_kubeconfig
+    # k3s_kubeconfig=/tmp/k3s_kubeconfig
+    # aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
+    # ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
+    # k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
+    # yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
+    # export KUBECONFIG=$k3s_kubeconfig
 
-    echo "Infrastructure has been successfully setup"
+    # echo "Infrastructure has been successfully setup"
 
     cd ${PWD}/k3s_services
     bash ./run.sh $action

@@ -10,7 +10,7 @@ pipelineJob("set-folders") {
                         url("\${primary-repo}")
                     }
                 }
-                scriptPath("pipelines-as-code/jenkins/bootstrap/set-folders/Jenkinsfile.groovy")
+                scriptPath("aws/k3s-terraform-cluster/pipelines-as-code/jenkins/bootstrap/set-folders/Jenkinsfile.groovy")
             }
         }
     }
