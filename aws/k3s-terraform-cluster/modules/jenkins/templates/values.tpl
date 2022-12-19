@@ -17,6 +17,7 @@ controller:
   targetPort: 80
   agentListenerServiceType: NodePort
   serviceExternalTrafficPolicy: Local
+  jenkinsUriPrefix: "/jenkins"
   csrf:
     defaultCrumbIssuer:
       enabled: true
@@ -258,16 +259,16 @@ controller:
 healthProbes: true
 livenessProbe:
     httpGet:
-      path: "/login"
-      port: 8080
+      path: "/jenkins/login"
+      port: 80
     initialDelaySeconds: 90
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 5
 readinessProbe:
   httpGet:
-    path: "/login"
-    port: 8080
+    path: "/jenkins/login"
+    port: 80
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
