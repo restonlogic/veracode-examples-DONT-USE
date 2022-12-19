@@ -157,6 +157,51 @@ resource "aws_iam_policy" "allow_secrets_manager" {
   )
 }
 
+resource "aws_iam_policy" "allow_jenkins" {
+  name        = "${var.common_prefix}-jenkins-policy-${var.global_config.environment}"
+  path        = "/"
+  description = "Jenkins Policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:*",
+          "elasticloadbalancing:*",
+          "cloudtrail:*",
+          "events:*",
+          "logs:*",
+          "cloudwatch:*",
+          "autoscaling:*",
+          "iam:*",
+          "eks:*",
+          "rds:*",
+          "ecr:*",
+          "s3:*",
+          "ssm:*",
+          "secretsmanager:*",
+          "acm:*",
+          "kms:*",
+          "cloudfront:*",
+          "sts:*"
+        ],
+        Resource = [
+          "*"
+        ]
+      }
+    ]
+  })
+
+  tags = merge(
+    local.global_tags,
+    {
+      "Name" = lower("${var.common_prefix}-jenkins-policy-${var.global_config.environment}")
+    }
+  )
+}
+
 resource "aws_iam_role_policy_attachment" "attach_ec2_ro_policy" {
   role       = aws_iam_role.aws_ec2_custom_role.name
   policy_arn = data.aws_iam_policy.AmazonEC2ReadOnlyAccess.arn
@@ -182,6 +227,10 @@ resource "aws_iam_role_policy_attachment" "attach_allow_secrets_manager_policy" 
   policy_arn = aws_iam_policy.allow_secrets_manager.arn
 }
 
+resource "aws_iam_role_policy_attachment" "attach_allow_secrets_jenkins_policy" {
+  role       = aws_iam_role.aws_ec2_custom_role.name
+  policy_arn = aws_iam_policy.allow_jenkins.arn
+}
 ## Lambda
 
 resource "aws_iam_role" "kube_cleaner_lambda_role" {

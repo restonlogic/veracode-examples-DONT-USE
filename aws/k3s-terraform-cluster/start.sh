@@ -9,7 +9,7 @@ OPT="value"
 
 # getopts string
 # This string needs to be updated with the single character options (e.g. -f)
-opts="a:n:e:o:cea"
+opts="a:n:e:o:u:t:ga:go:gr:gb:cea"
 
 # Gets the command name without path
 cmd() { echo $(basename $0); }
@@ -22,6 +22,12 @@ usage() {
     -n, --name; name to use for deployment, can be veracode.
     -e, --environment; environment being deployed, can be poc.
     -o, --organization; name of the organization.
+    -u, --git_user; provide a Github username
+    -t, --git_token; provide a Github token
+    -ga,--git_address; provide a Github Address (github.com)
+    -go,--git_org; provide a Git Org
+    -gr,--git_repo; provide a Git Repo
+    -gb,--git_branch; provide a Git Branch 
     -cea, --certmanager-email-address; certificate manager email address to use.
     " | column -t -s ";"
 }
@@ -61,6 +67,30 @@ for pass in 1 2; do
                 organization=$2
                 shift
                 ;;
+            -u | --git_user)
+                git_user=$2
+                shift
+                ;;
+            -t | --git_token)
+                git_token=$2
+                shift
+                ;;
+            -ga | --git_address)
+                git_address=$2
+                shift
+                ;;
+            -go | --git_org)
+                git_org=$2
+                shift
+                ;;
+            -gr | --git_repo)
+                git_repo=$2
+                shift
+                ;;
+            -gb | --git_branch)
+                git_branch=$2
+                shift
+                ;;
             -cea | --certmanager-email-address)
                 certmanager_email_address=$2
                 shift
@@ -95,14 +125,14 @@ if [ -n "$*" ]; then
     exit 1
 fi
 
-if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $certmanager_email_address ]; then
+if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [[ -z $git_address ]] || [[ -z $git_org ]] || [[ -z $git_repo ]] || [[ -z $git_branch ]] || [ -z $certmanager_email_address ]; then
     usage
     exit 1
 fi
 
 manifest=manifest.json
 
-# Set manifest config
+# Set cluster config config
 contents="$(jq --arg name $name '.global_config.name = $name' ./$manifest)" && \
 echo -E "${contents}" > ./$manifest
 
@@ -114,6 +144,19 @@ echo -E "${contents}" > ./$manifest
 
 contents="$(jq --arg certmanager_email_address $certmanager_email_address '.cluster_config.certmanager_email_address = $certmanager_email_address' ./$manifest)" && \
 echo -E "${contents}" > ./$manifest
+
+# Set git configuration
+contents="$(jq --arg git_address $git_address '.git_config.gitops_address = $git_address' ./$manifest)" &&
+    echo -E "${contents}" > ./$manifest
+
+contents="$(jq --arg git_org $git_org '.git_config.gitops_org = $git_org' ./$manifest)" &&
+    echo -E "${contents}" > ./$manifest
+
+contents="$(jq --arg git_repo $git_repo '.git_config.gitops_repo = $git_repo' ./$manifest)" &&
+    echo -E "${contents}" > ./$manifest
+
+contents="$(jq --arg git_branch $git_branch '.git_config.gitops_branch = $git_branch' ./$manifest)" &&
+    echo -E "${contents}" > ./$manifest
 
 echo "starting starting installation of base infrastructure"
 
@@ -145,26 +188,32 @@ aws ssm put-parameter --name /tf/${NAME}/${ENVIRONMENT}/tfBucketName --overwrite
 
 if [ $action = "apply" ]; then
 
+    # Create Secrets
+    cd ${PWD}/secret-services
+    bash ./run.sh $action $git_user $git_token
+    cd ..
+
     # Create Network
     cd ${PWD}/network_services
     bash ./run.sh $action
     cd ..
 
+    # Create K3s Cluster
     Create K3s Cluster
     cd ${PWD}/k3s_cluster
     bash ./run.sh $action
     cd ..
 
 
-    echo "sleepig for 2 min, waiting for k3s kubeconfig."
+    echo "sleepig for 2 min, waiting for k3s install to finish and get kubeconfig."
 
     sleep 2m
 
     k3s_kubeconfig=/tmp/k3s_kubeconfig
     aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
     ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
-    ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
-    yq -i -e ".clusters[].cluster.server = \"$ext_lb_dns\"" /tmp/k3s_kubeconfig
+    k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
+    yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
     export KUBECONFIG=$k3s_kubeconfig
 
     echo "Infrastructure has been successfully setup"
@@ -185,9 +234,26 @@ if [ $action = "destroy" ]; then
     cd ${PWD}/network_services
     bash ./run.sh $action
     cd ..
+
+    # Destroy Secrets
+    cd ${PWD}/secret_services
+    bash ./run.sh $action $git_user $git_token
+    cd ..
     
 fi
+
+jenkins_pass=$(aws secretsmanager --region $region get-secret-value --secret-id /${NAME}/${ENVIRONMENT}/jenkins-secrets --query SecretString --output text | jq -r '."jenkins-admin-password"')
+
 
 ORANGE='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'
+
+echo "**********************************************************************"
+echo "${GREEN}The service endpoints are listed below:${NC}\n"
+echo " "
+echo " Jenkins endpoint: "
+echo "   URL: http://$ext_lb_dns/jenkins"
+echo "   Credentials: admin / $jenkins_pass"
+echo " "
+echo "**********************************************************************"
