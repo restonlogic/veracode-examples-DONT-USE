@@ -199,7 +199,6 @@ if [ $action = "apply" ]; then
     cd ..
 
     # Create K3s Cluster
-    Create K3s Cluster
     cd ${PWD}/k3s_cluster
     bash ./run.sh $action
     cd ..
