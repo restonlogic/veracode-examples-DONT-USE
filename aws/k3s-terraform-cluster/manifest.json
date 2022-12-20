@@ -1,0 +1,21 @@
+{
+  "global_config": {
+    "name": "veracode",
+    "environment": "poc",
+    "region": "us-east-1",
+    "vpc_cidr": "10.0.0.0/16",
+    "organization": "restonlogic"
+  },
+  "git_config": {
+    "gitops_address": "github.com",
+    "gitops_org": "restonlogic",
+    "gitops_repo": "veracode-examples",
+    "gitops_branch": "main"
+  },
+  "cluster_config": {
+    "create_extlb": true,
+    "expose_kubeapi": true,
+    "efs_persistent_storage": true,
+    "certmanager_email_address": "brandon.samuel@restonlogic.com"
+  }
+}
