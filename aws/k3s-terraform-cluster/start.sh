@@ -189,7 +189,7 @@ aws ssm put-parameter --name /tf/${NAME}/${ENVIRONMENT}/tfBucketName --overwrite
 if [ $action = "apply" ]; then
 
     # Create Secrets
-    cd ${PWD}/secret-services
+    cd ${PWD}/secret_services
     bash ./run.sh $action $git_user $git_token
     cd ..
 
