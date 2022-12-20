@@ -220,6 +220,30 @@ if [ $action = "apply" ]; then
     cd ${PWD}/k3s_services
     bash ./run.sh $action
     cd ..
+
+    jenkins_pass=$(aws secretsmanager --region $REGION get-secret-value --secret-id /${NAME}/${ENVIRONMENT}/jenkins-secrets --query SecretString --output text | jq -r '."jenkins-admin-password"')
+    skooner_token=$(kubectl get secret -n default skooner-sa-token -o json | jq -r '.data.token' | base64 -d)
+
+    ORANGE='\033[0;33m'
+    GREEN='\033[0;32m'
+    BLUE='\033[0;34m'
+    BBLUE='\033[1;34m'
+    NC='\033[0m'
+
+    printf "${BLUE}**********************************************************************${NC}\n"
+    printf "${BBLUE}The service endpoints are listed below:${NC}\n"
+    echo " "
+    printf "${BLUE} Jenkins endpoint: ${NC}\n"
+    printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/jenkins\n"
+    printf "  ${BBLUE} Credentials${NC}: admin / $jenkins_pass\n"
+    echo " "
+    echo " "
+    printf "${BLUE} K3s Monitoring Dashboard: ${NC}\n"
+    printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/\n"
+    printf "  ${BBLUE} Token${NC}: $skooner_token\n"
+    echo " "
+    printf "${BLUE}**********************************************************************${NC}\n"
+    
 fi
 
 if [ $action = "destroy" ]; then
@@ -240,26 +264,3 @@ if [ $action = "destroy" ]; then
     cd ..
     
 fi
-
-jenkins_pass=$(aws secretsmanager --region $REGION get-secret-value --secret-id /${NAME}/${ENVIRONMENT}/jenkins-secrets --query SecretString --output text | jq -r '."jenkins-admin-password"')
-skooner_token=$(kubectl get secret -n default skooner-sa-token -o json | jq -r '.data.token' | base64 -d)
-
-ORANGE='\033[0;33m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-BBLUE='\033[1;34m'
-NC='\033[0m'
-
-printf "${BLUE}**********************************************************************${NC}\n"
-printf "${BBLUE}The service endpoints are listed below:${NC}\n"
-echo " "
-printf "${BLUE} Jenkins endpoint: ${NC}\n"
-printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/jenkins\n"
-printf "  ${BBLUE} Credentials${NC}: admin / $jenkins_pass\n"
-echo " "
-echo " "
-printf "${BLUE} K3s Monitoring Dashboard: ${NC}\n"
-printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/\n"
-printf "  ${BBLUE} Token${NC}: $skooner_token\n"
-echo " "
-printf "${BLUE}**********************************************************************${NC}\n"
