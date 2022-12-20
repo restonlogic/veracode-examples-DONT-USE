@@ -8,6 +8,7 @@ resource "null_resource" "skooner" {
     }
     command = <<EOT
         kubectl apply -f https://raw.githubusercontent.com/skooner-k8s/skooner/master/kubernetes-skooner.yaml &&
+        kubectl create serviceaccount skooner-sa &&
         kubectl apply -f ${path.module}/templates/token.yaml &&
         kubectl apply -f ${path.module}/templates/ingress.yaml
     EOT
