@@ -17,7 +17,7 @@ resource "aws_launch_template" "k3s_server" {
     }
   }
 
-  key_name = aws_key_pair.my_ssh_public_key.key_name
+  key_name = module.key_pair.key_pair_name
 
   network_interfaces {
     associate_public_ip_address = true
@@ -52,7 +52,7 @@ resource "aws_launch_template" "k3s_worker" {
     }
   }
 
-  key_name = aws_key_pair.my_ssh_public_key.key_name
+  key_name = module.key_pair.key_pair_name
 
   network_interfaces {
     associate_public_ip_address = true
