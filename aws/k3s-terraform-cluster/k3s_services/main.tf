@@ -2,6 +2,12 @@ module "cluster_autoscaler" {
   source = "../modules/cluster-autoscaler"
 }
 
+module "skooner" {
+  source = "../modules/skooner"
+
+  depends_on = [module.cluster_autoscaler]
+}
+
 module "jenkins" {
   source = "../modules/jenkins"
 

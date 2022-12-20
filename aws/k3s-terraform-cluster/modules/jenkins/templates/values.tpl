@@ -256,6 +256,11 @@ controller:
           limits:
             memory: "2048Mi"
             cpu: "2"
+  ingress:
+    enabled: true
+    apiVersion: "networking.k8s.io/v1"
+    ingressClassName: nginx
+    path: "/jenkins"
 healthProbes: true
 livenessProbe:
     httpGet:

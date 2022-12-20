@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 resource "null_resource" "daemonset" {
   triggers = {
     build_number = "${timestamp()}"
