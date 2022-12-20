@@ -45,15 +45,6 @@ apply)
     ;;
 destroy)
     echo "Running Terraform Destroy"
-
-    set +e
-    comm -23 <(aws ec2 describe-security-groups --query 'SecurityGroups[*].GroupId' --output text | tr '\t' '\n'| sort) \
-        <(aws ec2 describe-instances --query 'Reservations[*].Instances[*].SecurityGroups[*].GroupId' --output text | tr '\t' '\n' | sort | uniq) \
-        | tee -a unused-security-groups-in-ec2.txt
-    for x in `cat unused-security-groups-in-ec2.txt`; do echo 'deleting sg: $x' ; aws ec2 delete-security-group --group-id $x >/dev/null 2>&1; done
-    rm unused-security-groups-in-ec2.txt
-    set -e
-
     terraform destroy -auto-approve -compact-warnings \
         -var-file=../manifest.json
     ;;
