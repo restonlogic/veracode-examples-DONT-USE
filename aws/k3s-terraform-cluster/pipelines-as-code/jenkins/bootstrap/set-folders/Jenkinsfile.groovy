@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     build job: 'single-seed-job', parameters: [
-                        string(name: 'job_dsl_path', value: 'pipelines-as-code/jenkins/folders/dsl.groovy')
+                        string(name: 'job_dsl_path', value: 'aws/k3s-terraform-cluster/pipelines-as-code/jenkins/folders/dsl.groovy')
                     ]
                 }
             }
