@@ -206,7 +206,7 @@ if [ $action = "apply" ]; then
 
     echo "sleepig for 2 min, waiting for k3s install to finish and get kubeconfig."
 
-    sleep 2m
+    sleep 4m
 
     k3s_kubeconfig=/tmp/k3s_kubeconfig
     aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
