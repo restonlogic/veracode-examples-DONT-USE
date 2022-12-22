@@ -71,7 +71,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}/microservices/$image") {
-            veracode applicationName: "jenkins test", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+            veracode applicationName: "${image}", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
           }
         }
       }
