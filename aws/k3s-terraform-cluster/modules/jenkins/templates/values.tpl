@@ -8,7 +8,7 @@ controller:
     allowPrivilegeEscalation: false
   numExecutors: 6
   executorMode: "NORMAL"
-  image: "engrave/jenkins-veracode-example"
+  image: "engrave/jenkins"
   tag: "latest"
   adminSecret: true
   adminPassword: "${jenkins_admin_password}"
@@ -235,7 +235,7 @@ controller:
   sidecars:
     configAutoReload:
       enabled: true
-      image: kiwigrid/k8s-sidecar:1.21.0
+      image: kiwigrid/k8s-sidecar:1.15.0
       imagePullPolicy: IfNotPresent
       resources: {}
       reqRetryConnect: 10
@@ -246,7 +246,7 @@ controller:
         allowPrivilegeEscalation: true
     other:
       - name: dind
-        image: docker:20.10.22-dind-rootless
+        image: docker:18.05-dind
         securityContext:
           privileged: true
         resources:
