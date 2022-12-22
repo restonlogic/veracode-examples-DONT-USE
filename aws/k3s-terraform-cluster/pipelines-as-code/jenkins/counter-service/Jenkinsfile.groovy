@@ -71,7 +71,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}/microservices/$image") {
-            veracode applicationName: "${image}", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+            veracode applicationName: "jenkins test", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
           }
         }
       }
@@ -82,6 +82,7 @@ pipeline {
           script {
             dir("${repoFolder}/microservices/$image") {
                 sh """
+                cd app
                 export SRCCLR_API_TOKEN=${veracode_sca_key}
                 curl -sSL https://download.sourceclear.com/ci.sh | sh
                 """
