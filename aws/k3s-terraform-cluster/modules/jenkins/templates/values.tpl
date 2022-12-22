@@ -282,10 +282,11 @@ serviceAccount:
   create: true
   name: "jenkins-sa"
 persistence:
-  enabled: false
-  accessMode: "ReadWriteOnce"
+  enabled: true
+  accessMode: "ReadWriteMany"
   size: "100Gi"
+  storageClass: efs-sc
 agent:
   envVars:
     - name: DOCKER_HOST
-      value: tcp://localhost:2375
+      value: tcp://localhost:2376
