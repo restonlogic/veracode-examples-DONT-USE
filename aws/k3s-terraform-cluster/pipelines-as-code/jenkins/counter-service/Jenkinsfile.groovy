@@ -120,7 +120,7 @@ pipeline {
       }
     }
 
-      stage("Prepare $image Namespace") {
+      stage("Prepare Kubernetes Namespace") {
         steps {
           script {
             dir("${repoFolder}") {
@@ -153,7 +153,7 @@ pipeline {
       }
     }
   
-      stage("Deploy $image") {
+      stage("Deploy Manifests") {
         steps {
           script {
             dir("${repoFolder}") {
