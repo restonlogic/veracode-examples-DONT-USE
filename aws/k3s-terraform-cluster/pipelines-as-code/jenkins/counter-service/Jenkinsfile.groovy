@@ -46,16 +46,11 @@ pipeline {
                 org        = sh(script: "jq '.global_config.organization' -r ./manifest.json", returnStdout: true).trim()
                 acme_email = sh(script: "jq '.cluster_config.certmanager_email_address' -r ./manifest.json", returnStdout: true).trim()
                 build_tag  = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                git_address    = sh(script: "jq '.git_config.gitops_address' -r ./manifest.json", returnStdout: true).trim()
-                git_pat_token  = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/secrets --query SecretString --output text | jq -r '.\"git-token\"'",
-                                 returnStdout: true).trim()
-                git_pat_user   = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/secrets --query SecretString --output text | jq -r '.\"git-username\"'",
-                                 returnStdout: true).trim()
-                veracode_api_id = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-api-id\"'",
+                veracode_api_id = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-api-id\"'",
                                   returnStdout: true).trim()
-                veracode_api_key = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-api-key\"'",
+                veracode_api_key = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-api-key\"'",
                                   returnStdout: true).trim()
-                veracode_sca_key = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-sca-key\"'",
+                veracode_sca_key = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-sca-key\"'",
                                   returnStdout: true).trim()
                 ecr_repo_url   = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/ecr-repo/$image | jq -r '.SecretString'",
                                   returnStdout: true).trim()
@@ -76,7 +71,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}/microservices/$image") {
-            veracode applicationName: ${image}, criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+            veracode applicationName: "${image}", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
           }
         }
       }
