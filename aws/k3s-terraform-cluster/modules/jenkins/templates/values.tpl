@@ -246,7 +246,7 @@ controller:
         allowPrivilegeEscalation: true
     other:
       - name: dind
-        image: docker:20.10.22-dind
+        image: docker:20.10.22-dind-rootless
         securityContext:
           privileged: true
         resources:
