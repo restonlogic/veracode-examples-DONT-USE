@@ -216,7 +216,7 @@ if [ $action = "apply" ]; then
     cd ..
 
 
-    echo "sleepig for 2 min, waiting for k3s install to finish and get kubeconfig."
+    echo "sleeping for 4 min, waiting for k3s install to finish and get kubeconfig."
 
     sleep 4m
 
