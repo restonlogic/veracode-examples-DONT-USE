@@ -1,0 +1,1 @@
+variable "global_config" {}

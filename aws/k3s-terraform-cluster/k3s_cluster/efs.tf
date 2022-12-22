@@ -17,3 +17,9 @@ resource "aws_efs_mount_target" "k3s_persistent_storage_mount_target" {
   subnet_id       = data.terraform_remote_state.vpc.outputs.public_subnets[count.index]
   security_groups = [aws_security_group.efs_sg[0].id]
 }
+
+resource "aws_ssm_parameter" "efs_system_id" {
+  name  = "/${var.global_config.name}/${var.global_config.environment}/efs_system_id"
+  type  = "String"
+  value = aws_efs_file_system.k3s_persistent_storage[0].id
+}

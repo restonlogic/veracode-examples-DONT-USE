@@ -1,5 +1,13 @@
+module "storage_class" {
+  source = "../modules/efs-storageclass"
+
+  global_config = var.global_config
+}
+
 module "cluster_autoscaler" {
   source = "../modules/cluster-autoscaler"
+
+  depends_on = [module.storage_class]
 }
 
 module "skooner" {
