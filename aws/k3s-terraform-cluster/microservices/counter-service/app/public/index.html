@@ -36,7 +36,7 @@
       }
       running = true;
       
-      $.post('/increment', function (data, textStatus, jqXHR) {
+      $.post('/counter-service/increment', function (data, textStatus, jqXHR) {
         if (data.err == null) {
           status.removeClass("error");
           status.text("Everything is working")
@@ -74,7 +74,7 @@
       }
       running = true;
       
-      $.delete('/counter', function (data, textStatus, jqXHR) {
+      $.delete('/counter-service/counter', function (data, textStatus, jqXHR) {
         if (data.err == null) {
           status.removeClass("error");
           status.text("Everything is working")
@@ -114,13 +114,13 @@
       var zone = $("#zone");
       var counter = $("#counter");
 
-      $.get('/version', function (data, textStatus, jqXHR) {
+      $.get('/counter-service/version', function (data, textStatus, jqXHR) {
         $("#header").css("background-color", data.color);
         $("#version").text(data.version);
         $("#loading").remove();
         $("#content").removeClass("hide");
       });
-      $.get('/counter', function (data, textStatus, jqXHR) {
+      $.get('/counter-service/counter', function (data, textStatus, jqXHR) {
         var counterVal;
         var zoneVal;
         if (data == null) {

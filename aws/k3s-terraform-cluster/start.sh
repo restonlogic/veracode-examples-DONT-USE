@@ -9,7 +9,7 @@ OPT="value"
 
 # getopts string
 # This string needs to be updated with the single character options (e.g. -f)
-opts="a:n:e:o:u:t:ga:go:gr:gb:cea"
+opts="a:n:e:o:u:t:ga:go:gr:gb:cea:vid:vik:sca"
 
 # Gets the command name without path
 cmd() { echo $(basename $0); }
@@ -29,6 +29,9 @@ usage() {
     -gr,--git_repo; provide a Git Repo
     -gb,--git_branch; provide a Git Branch 
     -cea, --certmanager-email-address; certificate manager email address to use.
+    -vid, --veracode-api-id; veracode api id.
+    -vik, --veracode-api-key; veracode api key.
+    -sca, --veracode-sca-key; veracode sca key.
     " | column -t -s ";"
 }
 
@@ -94,6 +97,15 @@ for pass in 1 2; do
             -cea | --certmanager-email-address)
                 certmanager_email_address=$2
                 shift
+            -vid | --veracode-api-id)
+                veracode_api_id=$2
+                shift
+            -vik | --veracode-api-key)
+                veracode_api_key=$2
+                shift
+            -sca | --veracode-sca-key)
+                veracode_sca_key=$2
+                shift
                 ;;
             -v | --verbose) VERBOSE=$(($VERBOSE + 1)) ;;
             --*) error $1 ;;
@@ -125,7 +137,7 @@ if [ -n "$*" ]; then
     exit 1
 fi
 
-if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [[ -z $git_address ]] || [[ -z $git_org ]] || [[ -z $git_repo ]] || [[ -z $git_branch ]] || [ -z $certmanager_email_address ]; then
+if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [[ -z $git_address ]] || [[ -z $git_org ]] || [[ -z $git_repo ]] || [[ -z $git_branch ]] || [ -z $certmanager_email_address ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ] || [ -z $veracode_sca_key ]; then
     usage
     exit 1
 fi
@@ -190,7 +202,7 @@ if [ $action = "apply" ]; then
 
     # Create Secrets
     cd ${PWD}/secret_services
-    bash ./run.sh $action $git_user $git_token
+    bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key $veracode_sca_key
     cd ..
 
     # Create Network

@@ -23,6 +23,16 @@ module "github_secrets" {
   })
 }
 
+module "veracode_secrets" {
+  source      = "../modules/secrets-manager-secret"
+  secret_name = "/${var.global_config.name}/${var.global_config.environment}/veracode-secrets"
+  secret_string = jsonencode({
+    veracode-api-id        = var.veracode_api_id
+    veracode-api-key       = var.veracode_api_key
+    veracode-sca-key       = var.veracode_sca_key
+  })
+}
+
 resource "random_password" "jenkins_admin_password" {
   length  = 16
   special = false

@@ -3,7 +3,7 @@ const Redis = require("ioredis");
 
 const COUNTER_KEY = "counter"
 const ZONE_KEY = "zone"
-const PORT = 5000;
+const PORT = 80;
 
 const app = express();
 
@@ -35,9 +35,9 @@ function getClient() {
   return client;
 }
 
-app.use('/', express.static('public'));
+app.use('/counter-service', express.static('public'));
 
-app.post('/increment', function(req, res){
+app.post('/counter-service/increment', function(req, res){
   var client = getClient();
   client.incr(COUNTER_KEY, function (err, counter_result) {
     if (err) {
@@ -60,7 +60,7 @@ app.post('/increment', function(req, res){
   });
 });
 
-app.delete('/counter', function(req, res){
+app.delete('/counter-service/counter', function(req, res){
   var client = getClient();
   client.del(COUNTER_KEY, function(err) {
     if (err) {
@@ -80,7 +80,7 @@ app.delete('/counter', function(req, res){
   });
 });
 
-app.get('/counter', function(req, res){
+app.get('/counter-service/counter', function(req, res){
   var client = getClient();
   client.get(COUNTER_KEY, function(err, counter_result) {
     if (err) {
@@ -103,7 +103,7 @@ app.get('/counter', function(req, res){
   });
 });
 
-app.get('/version', function(req, res) {
+app.get('/counter-service/version', function(req, res) {
   res.send({
     version: version,
     color: color

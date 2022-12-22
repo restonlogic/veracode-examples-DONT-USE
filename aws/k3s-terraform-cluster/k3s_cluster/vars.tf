@@ -2,6 +2,8 @@ variable "cluster_config" {}
 
 variable "global_config" {}
 
+variable "microservices" {}
+
 variable "common_prefix" {
   type    = string
   default = "k3s"

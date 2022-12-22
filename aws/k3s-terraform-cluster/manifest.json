@@ -12,6 +12,9 @@
     "gitops_repo": "veracode-examples",
     "gitops_branch": "main"
   },
+  "microservices": [
+    "counter-service"
+  ],
   "cluster_config": {
     "create_extlb": true,
     "expose_kubeapi": true,
