@@ -60,6 +60,8 @@ pipeline {
                 ecr_repo_url   = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/ecr-repo/$image | jq -r '.SecretString'",
                                   returnStdout: true).trim()
                 ecr_password   = sh(script: "aws ecr get-login-password --region $name", returnStdout: true).trim()
+                ext_lb_dns     = sh(script: "aws elbv2 describe-load-balancers --names k3s-ext-lb-$env | jq -r '.LoadBalancers[].DNSName'",
+                                  returnStdout: true).trim()
               sh """
                 k3s_kubeconfig=/tmp/k3s_kubeconfig
                 aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${name}-${env}-${org}-${env}-v2 | jq -r '.SecretString' > \"$k3s_kubeconfig\"
@@ -150,12 +152,26 @@ pipeline {
         }
       }
     }
+  
+      stage("Deploy $image") {
+        steps {
+          script {
+            dir("${repoFolder}") {
+              sh """
+              kubectl apply -f ${image}.yaml
+              kubectl apply -f ingress.yaml
+              """
+          }
+        }
+      }
+    }
+
 
     stage("Healthcheck") {
       steps {
         dir("${repoFolder}") {
           sh """
-            bash -c 'while [[ "\$(curl -s -o /dev/null -w ''%{http_code}'' https://${cdn_domain}/patient-event/q/health)" != "200" ]]; do echo "waiting for patient event service healtheck to pass, sleeping.";\\sleep 5; done; echo "patient event service url: https://${cdn_domain}/patient-event/q/swagger-ui/"'
+            bash -c 'while [[ "\$(curl -s -o /dev/null -w ''%{http_code}'' http://${ext_lb_dns}/${image})" != "200" ]]; do echo "waiting for $image healtheck to pass, sleeping.";\\sleep 5; done; echo "$image url: http://${ext_lb_dns}/${image}"'
           """
         }
       }
