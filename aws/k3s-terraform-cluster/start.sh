@@ -140,7 +140,8 @@ if [ -n "$*" ]; then
     exit 1
 fi
 
-if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [[ -z $git_address ]] || [[ -z $git_org ]] || [[ -z $git_repo ]] || [[ -z $git_branch ]] || [ -z $certmanager_email_address ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ] || [ -z $veracode_sca_key ]; then
+if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $certmanager_email_address ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ] || [ -z $veracode_sca_key ]; then
+    echo "missing parameters, please see options below"
     usage
     exit 1
 fi
