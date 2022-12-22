@@ -40,11 +40,11 @@ pipeline {
                 echo "Setting env variables"
                 """
                 image      = "counter-service"
-                env        = sh(script: "jq '.global_config.environment' -r ./manifest.json", returnStdout: true).trim()
-                name       = sh(script: "jq '.global_config.name' -r ./manifest.json", returnStdout: true).trim()
-                region     = sh(script: "jq '.global_config.region' -r ./manifest.json", returnStdout: true).trim()
-                org        = sh(script: "jq '.global_config.organization' -r ./manifest.json", returnStdout: true).trim()
-                acme_email = sh(script: "jq '.cluster_config.certmanager_email_address' -r ./manifest.json", returnStdout: true).trim()
+                env        = sh(script: "jq '.global_config.environment' -r manifest.json", returnStdout: true).trim()
+                name       = sh(script: "jq '.global_config.name' -r manifest.json", returnStdout: true).trim()
+                region     = sh(script: "jq '.global_config.region' -r manifest.json", returnStdout: true).trim()
+                org        = sh(script: "jq '.global_config.organization' -r manifest.json", returnStdout: true).trim()
+                acme_email = sh(script: "jq '.cluster_config.certmanager_email_address' -r manifest.json", returnStdout: true).trim()
                 build_tag  = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                 veracode_api_id = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-api-id\"'",
                                   returnStdout: true).trim()
