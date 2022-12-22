@@ -97,12 +97,15 @@ for pass in 1 2; do
             -cea | --certmanager-email-address)
                 certmanager_email_address=$2
                 shift
+                ;;
             -vid | --veracode-api-id)
                 veracode_api_id=$2
                 shift
+                ;;
             -vik | --veracode-api-key)
                 veracode_api_key=$2
                 shift
+                ;;
             -sca | --veracode-sca-key)
                 veracode_sca_key=$2
                 shift
