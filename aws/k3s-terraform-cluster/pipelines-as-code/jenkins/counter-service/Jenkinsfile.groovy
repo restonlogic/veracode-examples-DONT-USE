@@ -40,13 +40,13 @@ pipeline {
                 echo "Setting env variables"
                 """
                 image      = "counter-service"
-                env        = sh(script: "jq '.global_config.environment' -r manifest.json", returnStdout: true).trim()
-                name       = sh(script: "jq '.global_config.name' -r manifest.json", returnStdout: true).trim()
-                region     = sh(script: "jq '.global_config.region' -r manifest.json", returnStdout: true).trim()
-                org        = sh(script: "jq '.global_config.organization' -r manifest.json", returnStdout: true).trim()
-                acme_email = sh(script: "jq '.cluster_config.certmanager_email_address' -r manifest.json", returnStdout: true).trim()
+                env        = sh(script: "jq '.global_config.environment' -r ./manifest.json", returnStdout: true).trim()
+                name       = sh(script: "jq '.global_config.name' -r ./manifest.json", returnStdout: true).trim()
+                region     = sh(script: "jq '.global_config.region' -r ./manifest.json", returnStdout: true).trim()
+                org        = sh(script: "jq '.global_config.organization' -r ./manifest.json", returnStdout: true).trim()
+                acme_email = sh(script: "jq '.cluster_config.certmanager_email_address' -r ./manifest.json", returnStdout: true).trim()
                 build_tag  = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                git_address    = sh(script: "jq '.git_config.gitops_address' -r manifest.json", returnStdout: true).trim()
+                git_address    = sh(script: "jq '.git_config.gitops_address' -r ./manifest.json", returnStdout: true).trim()
                 git_pat_token  = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/secrets --query SecretString --output text | jq -r '.\"git-token\"'",
                                  returnStdout: true).trim()
                 git_pat_user   = sh(script: "aws secretsmanager get-secret-value --secret-id /$name/$env/secrets --query SecretString --output text | jq -r '.\"git-username\"'",
