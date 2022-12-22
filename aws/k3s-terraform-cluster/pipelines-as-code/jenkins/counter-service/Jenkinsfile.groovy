@@ -59,7 +59,7 @@ pipeline {
                                   returnStdout: true).trim()
                 ecr_repo_url   = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/ecr-repo/$image | jq -r '.SecretString'",
                                   returnStdout: true).trim()
-                ecr_password   = sh(script: "aws ecr get-login-password --region $name", returnStdout: true).trim()
+                ecr_password   = sh(script: "aws ecr get-login-password --region $region", returnStdout: true).trim()
                 ext_lb_dns     = sh(script: "aws elbv2 describe-load-balancers --names k3s-ext-lb-$env | jq -r '.LoadBalancers[].DNSName'",
                                   returnStdout: true).trim()
               sh """
