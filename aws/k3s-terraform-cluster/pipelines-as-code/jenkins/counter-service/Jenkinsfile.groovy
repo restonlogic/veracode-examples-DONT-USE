@@ -59,7 +59,7 @@ pipeline {
                                   returnStdout: true).trim()
               sh """
                 k3s_kubeconfig=/tmp/k3s_kubeconfig
-                aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-ext-${name}-${env}-${org}-${env}-v2 --region $region | jq -r '.SecretString' > \$k3s_kubeconfig
+                aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${name}-${env}-${org}-${env}-v2 --region $region | jq -r '.SecretString' > \$k3s_kubeconfig
                 export KUBECONFIG=\$k3s_kubeconfig
                 kubectl get pods -A 
                 """
