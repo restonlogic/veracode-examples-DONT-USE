@@ -12,14 +12,6 @@ pipeline {
     }
 
   stages {
-      stage("Clean Workspace") {
-        steps {
-          script {
-            cleanWs()
-          }
-        }
-      }
-
       stage("Checkout Repository") {
           steps {
               script {
@@ -167,10 +159,20 @@ pipeline {
         dir("${repoFolder}") {
           sh """
             bash -c 'while [[ "\$(curl -s -o /dev/null -w ''%{http_code}'' http://${ext_lb_dns}/${image}/)" != "200" ]]; do echo "waiting for $image healtheck to pass, sleeping.";\\sleep 5; done; echo "$image url: http://${ext_lb_dns}/${image}/"'
-            docker rmi -f \$(docker images -q $ecr_repo_url:*)
           """
         }
       }
+    }
+
+    stage("Clean Workspace") {
+        steps {
+          script {
+            cleanWs()
+            sh """
+            docker rmi -f \$(docker images -q $ecr_repo_url:*)
+            """
+          }
+        }
     }
   }
 }
