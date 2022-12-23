@@ -286,7 +286,7 @@ readinessProbe:
   timeoutSeconds: 5
   failureThreshold: 3
 serviceAccount:
-  create: true
+  create: false
   name: "jenkins-sa"
 persistence:
   enabled: true
