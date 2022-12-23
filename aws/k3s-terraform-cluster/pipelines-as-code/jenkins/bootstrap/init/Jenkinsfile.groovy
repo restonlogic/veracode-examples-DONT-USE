@@ -1,6 +1,6 @@
 @Library(['jenkins-library@main']) _
 pipeline {
-    agent none
+    agent master
     options {
         ansiColor('xterm')
         timeout(time: 1, unit: 'HOURS')
