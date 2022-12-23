@@ -293,3 +293,7 @@ persistence:
   accessMode: "ReadWriteMany"
   size: "100Gi"
   storageClass: efs-sc
+agent:
+  envVars:
+    - name: DOCKER_HOST
+      value: tcp://localhost:2375
