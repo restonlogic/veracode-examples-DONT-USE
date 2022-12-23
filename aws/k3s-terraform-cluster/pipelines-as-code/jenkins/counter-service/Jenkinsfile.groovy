@@ -96,6 +96,7 @@ pipeline {
           script {
             dir("${repoFolder}/microservices/$image") {
                 sh """
+                docker rmi $(docker images -q $ecr_repo_url:*)
                 docker build -t $ecr_repo_url:$buildNumber -t $ecr_repo_url:$build_tag -t $ecr_repo_url:$branch .
                 """
           }

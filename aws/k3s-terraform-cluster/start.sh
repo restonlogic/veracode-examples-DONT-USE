@@ -259,7 +259,7 @@ if [ $action = "apply" ]; then
     printf "  ${BBLUE} Token${NC}: $skooner_token\n"
     echo " "
     echo " API Layer Services:"
-    printf " ${BBLUE}NOTE: The counter service is being built, scanned and deployed by jenkins, the url will appear below when its done. feel free to log into jenkins to see progress and veracode to view scan results.${NC}\\n"
+    printf " ${ORANGE}NOTE: The counter service is being built, scanned and deployed by jenkins, the url will appear below when its done.\nplease to log into jenkins to see progress and veracode to view scan results.${NC}\\n"
     while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://$ext_lb_dns/counter-service/)" != "200" ]]; do sleep 5; done; printf "  ${BBLUE}counter service url${NC}: http://$ext_lb_dns/counter-service/\n"
     printf "${BLUE}**********************************************************************${NC}\n"
     
