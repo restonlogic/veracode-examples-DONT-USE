@@ -246,7 +246,7 @@ controller:
         allowPrivilegeEscalation: true
     other:
       - name: dind
-        image: docker:20.10.22-dind-rootless
+        image: docker:dind
         securityContext:
           privileged: true
         resources:
@@ -256,6 +256,13 @@ controller:
           limits:
             memory: "2048Mi"
             cpu: "2"
+        env:
+        - name: DOCKER_HOST
+          value: tcp://docker:2375/
+        - name: DOCKER_DRIVER
+          value: overlay2
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
   ingress:
     enabled: true
     apiVersion: "networking.k8s.io/v1"
@@ -286,7 +293,3 @@ persistence:
   accessMode: "ReadWriteMany"
   size: "100Gi"
   storageClass: efs-sc
-agent:
-  envVars:
-    - name: DOCKER_HOST
-      value: tcp://localhost:2376
