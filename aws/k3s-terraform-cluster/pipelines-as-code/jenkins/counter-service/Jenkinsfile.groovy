@@ -59,10 +59,7 @@ pipeline {
                                   returnStdout: true).trim()
               sh """
                 k3s_kubeconfig=/tmp/k3s_kubeconfig
-                aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${name}-${env}-${org}-${env}-v2 --region $region | jq -r '.SecretString' > \$k3s_kubeconfig
-                ext_lb_dns=\$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$env" --region $region | jq -r '.LoadBalancers[].DNSName')
-                k3s_ext_lb_dns=\$(echo https://\${ext_lb_dns}:6443)
-                yq -i -e ".clusters[].cluster.server = \"\$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
+                aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-ext-${name}-${env}-${org}-${env}-v2 --region $region | jq -r '.SecretString' > \$k3s_kubeconfig
                 export KUBECONFIG=\$k3s_kubeconfig
                 kubectl get pods -A 
                 """
