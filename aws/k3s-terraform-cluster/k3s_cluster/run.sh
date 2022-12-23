@@ -2,6 +2,11 @@
 set -e
 
 action=$1
+ORANGE='\033[0;33m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+BBLUE='\033[1;34m'
+NC='\033[0m'
 
 NAME=$(jq '.global_config.name' -r ../manifest.json)
 ENVIRONMENT=$(jq '.global_config.environment' -r ../manifest.json)
@@ -28,7 +33,7 @@ if [ -z $BUCKET_NAME ]; then
     exit 1
 fi
 
-echo "Deploying K3s Cluster"
+printf "${BBLUE}Running terraform $action on k3s_cluster${NC}\n"
 rm -rf .terraform
 rm -rf .terraform.lock.hcl
 terraform init \
@@ -39,17 +44,14 @@ terraform init \
 terraform validate
 case $action in
 apply)
-    echo "Running Terraform Apply Full"
     terraform apply -auto-approve -compact-warnings \
         -var-file=../manifest.json
     ;;
 destroy)
-    echo "Running Terraform Destroy"
     terraform destroy -auto-approve -compact-warnings \
         -var-file=../manifest.json
     ;;
 plan)
-    echo "Running Terraform Plan"
     terraform plan -compact-warnings \
         -var-file=../manifest.json
     ;;

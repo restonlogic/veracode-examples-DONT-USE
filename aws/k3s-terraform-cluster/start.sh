@@ -6,6 +6,11 @@ set -e
 
 # Option defaults
 OPT="value"
+ORANGE='\033[0;33m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+BBLUE='\033[1;34m'
+NC='\033[0m'
 
 # getopts string
 # This string needs to be updated with the single character options (e.g. -f)
@@ -174,7 +179,7 @@ contents="$(jq --arg git_repo $git_repo '.git_config.gitops_repo = $git_repo' ./
 contents="$(jq --arg git_branch $git_branch '.git_config.gitops_branch = $git_branch' ./$manifest)" &&
     echo -E "${contents}" > ./$manifest
 
-echo "starting starting installation of base infrastructure"
+printf "${BBLUE}Starting starting installation of infrastructure${NC}\n"
 
 ACCOUNTID=$(aws sts get-caller-identity | jq -r '.Account')
 NAME=$(jq '.global_config.name' -r ./manifest.json)
@@ -185,8 +190,8 @@ ORG=$(jq '.global_config.organization' -r ./manifest.json)
 aws configure set default.region $REGION
 
 BUCKET_NAME="tf-state-${NAME}-${ENVIRONMENT}-${ORG}-${ACCOUNTID}"
-echo "CREATING TERRAFORM STATE BACKEND BUCKET NAME: ${BUCKET_NAME}"
-echo "USIING TERRAFORM BACKEND REGION: ${REGION}"
+printf "${BBLUE}CREATING TERRAFORM STATE BACKEND BUCKET NAME: ${BUCKET_NAME}${NC}\n"
+printf "${BBLUE}USIING TERRAFORM BACKEND REGION: ${REGION}${NC}\n"
 
 # Disable exitting on error temporarily for ubuntu users. Below command checks to see if bucket exists.
 set +e
@@ -196,7 +201,7 @@ if [ -z $rc ]; then
     # Create bucket if not exist
     aws s3 mb s3://$BUCKET_NAME --region $REGION
 else
-    echo "Terraform state bucket exists..skipping"
+    printf "${GREEN}Terraform state bucket exists.skipping${NC}\n"
 fi
 
 # Saving bucket name for future use
@@ -220,7 +225,7 @@ if [ $action = "apply" ]; then
     cd ..
 
 
-    echo "sleeping for 4 min, waiting for k3s install to finish and get kubeconfig."
+    printf "${ORANGE}sleeping for 4 min, waiting for k3s install to finish and get kubeconfig.${NC}\n"
 
     sleep 4m
 
@@ -231,7 +236,7 @@ if [ $action = "apply" ]; then
     yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
     export KUBECONFIG=$k3s_kubeconfig
 
-    echo "Infrastructure has been successfully setup"
+    printf "${GREEN}Infrastructure has been successfully setup${NC}\n"
 
     cd ${PWD}/k3s_services
     bash ./run.sh $action
@@ -240,12 +245,6 @@ if [ $action = "apply" ]; then
     jenkins_pass=$(aws secretsmanager --region $REGION get-secret-value --secret-id /${NAME}/${ENVIRONMENT}/jenkins-secrets --query SecretString --output text | jq -r '."jenkins-admin-password"')
     skooner_token=$(kubectl get secret -n default skooner-sa-token -o json | jq -r '.data.token' | base64 -d)
 
-    ORANGE='\033[0;33m'
-    GREEN='\033[0;32m'
-    BLUE='\033[0;34m'
-    BBLUE='\033[1;34m'
-    NC='\033[0m'
-
     printf "${BLUE}**********************************************************************${NC}\n"
     printf "${BBLUE}The service endpoints are listed below:${NC}\n"
     echo " "
@@ -253,6 +252,8 @@ if [ $action = "apply" ]; then
     printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/jenkins\n"
     printf "  ${BBLUE} Credentials${NC}: admin / $jenkins_pass\n"
     echo " "
+    printf "${BLUE} Veracode Dashboard: ${NC}\n"
+    printf "  ${BBLUE} URL${NC}: https://web.analysiscenter.veracode.com/\n"
     echo " "
     printf "${BLUE} K3s Monitoring Dashboard: ${NC}\n"
     printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/\n"
