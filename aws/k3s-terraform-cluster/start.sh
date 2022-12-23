@@ -229,7 +229,6 @@ if [ $action = "apply" ]; then
     ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
     k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
     yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
-    aws secretsmanager create-secret --name k3s-kubeconfig-ext-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 --secret-string file:///tmp/k3s_kubeconfig --force-overwrite-replica-secret
     export KUBECONFIG=$k3s_kubeconfig
 
     echo "Infrastructure has been successfully setup"
