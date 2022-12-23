@@ -260,7 +260,7 @@ if [ $action = "apply" ]; then
     echo " "
     echo " API Layer Services:"
     printf " ${ORANGE}NOTE: The counter service is being built, scanned and deployed by jenkins, the url will appear below when its done.${NC}\\n"
-    while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://$ext_lb_dns/counter-service)" != "200" ]]; do sleep 5; done; printf "  ${GREEN}counter service url: http://$ext_lb_dns/counter-service${NC}\n"
+    while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://$ext_lb_dns/counter-service/)" != "200" ]]; do sleep 5; done; printf "  ${GREEN}counter service url: http://$ext_lb_dns/counter-service/${NC}\n"
     printf "${BLUE}**********************************************************************${NC}\n"
     
 fi
