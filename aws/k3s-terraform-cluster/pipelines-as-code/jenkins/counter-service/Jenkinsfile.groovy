@@ -123,7 +123,7 @@ pipeline {
             dir("${repoFolder}") {
               sh """
               kubectl create namespace $image --dry-run=client -o yaml | kubectl apply -f -
-              kubectl create secret docker-registry regcred --docker-server=$ecr_repo_url --docker-username=AWS --docker-password=$ecr_password --docker-email=$acme_email --dry-run=client -o yaml | kubectl apply -f -
+              kubectl create secret -n $image docker-registry regcred --docker-server=$ecr_repo_url --docker-username=AWS --docker-password=$ecr_password --docker-email=$acme_email --dry-run=client -o yaml | kubectl apply -f -
               """
           }
         }
