@@ -161,5 +161,15 @@ pipeline {
         }
       }
     }
+
+    stage("Healthcheck") {
+      steps {
+        dir("${repoFolder}") {
+          sh """
+            bash -c 'while [[ "\$(curl -s -o /dev/null -w ''%{http_code}'' http://${ext_lb_dns}/${image}/)" != "200" ]]; do echo "waiting for $image healtheck to pass, sleeping.";\\sleep 5; done; echo "$image url: http://${ext_lb_dns}/${image}/"'
+          """
+        }
+      }
+    }
   }
 }
