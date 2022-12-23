@@ -43,7 +43,6 @@ controller:
   permissive-script-security:
     enabled: true
   installPlugins:
-    - kubernetes:1.31.2
     - git:latest
     - configuration-as-code:latest
     - workflow-aggregator:2.6
