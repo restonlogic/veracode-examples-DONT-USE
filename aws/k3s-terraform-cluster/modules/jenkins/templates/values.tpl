@@ -70,17 +70,14 @@ controller:
     - pipeline-stage-view:latest
     - pipeline-utility-steps:latest
     - rebuild:latest
-    - ssh:2.6.1
     - solarized-theme:0.1
     - timestamper:latest
     - workflow-cps-global-lib:latest
     - workflow-job:latest
     - ws-cleanup:latest
     - prometheus:latest
-    - http_request:1.14
-    - durable-task:500.v8927d9fd99d8
-    - sonar:2.14
-    - htmlpublisher:1.30
+    - http_request:1.16
+    - durable-task:503.v57154d18d478
     - veracode-scan:22.6.18.0
 
   JCasC:
@@ -169,7 +166,6 @@ controller:
                       }
                   }
               }
-
           - script: >
               job("single-seed-job") {
                   description("Freestyle Job that builds a single other job")

@@ -35,10 +35,7 @@ pipeline {
                 script {
                     build(job: 'set-folders', propagate: true, wait: true)
 
-                    build(
-                        job: 'seed-job',
-                        propagate: true
-                    )
+                    build(job: 'seed-job', propagate: true, wait: true)
 
                     build(job: 'set-folders', propagate: true, wait: true)
                 }
