@@ -24,7 +24,7 @@ pipeline {
                     gitopsOrgUrl = genericsteps.getSecretString('gitops-org-url')
                     repo = genericsteps.getSecretString('gitops-repo')
                     branch = genericsteps.getSecretString('gitops-branch')
-                    repoFolder  = "/repos/${repo}"
+                    repoFolder  = "/repos/${repo}/aws/k3s-terraform-cluster"
                     genericsteps.checkoutGitRepository("${repoFolder}", "${gitopsOrgUrl}/${repo}.git", "${branch}", 'git-creds')
                 }
             }
@@ -38,8 +38,6 @@ pipeline {
                     build(job: 'seed-job', propagate: true, wait: true)
 
                     build(job: 'set-folders', propagate: true, wait: true)
-
-                    build(job: 'seed-job', propagate: true, wait: true)
                 }
             }
         }
