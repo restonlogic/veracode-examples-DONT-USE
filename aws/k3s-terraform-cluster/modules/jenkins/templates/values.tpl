@@ -24,11 +24,11 @@ controller:
       proxyCompatibility: true
   resources:
     requests:
-      cpu: "50m"
-      memory: "256Mi"
-    limits:
       cpu: "1024m"
       memory: "2048Mi"
+    limits:
+      cpu: "2048m"
+      memory: "4096Mi"
   authorizationStrategy:
     globalMatrix:
       permissions:
