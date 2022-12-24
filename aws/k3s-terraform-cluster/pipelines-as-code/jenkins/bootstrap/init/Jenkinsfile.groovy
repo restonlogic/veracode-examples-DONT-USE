@@ -24,7 +24,7 @@ pipeline {
                     gitopsOrgUrl = genericsteps.getSecretString('gitops-org-url')
                     repo = genericsteps.getSecretString('gitops-repo')
                     branch = genericsteps.getSecretString('gitops-branch')
-                    repoFolder  = "/repos/${repo}/aws/k3s-terraform-cluster"
+                    repoFolder  = "/repos/${repo}"
                     genericsteps.checkoutGitRepository("${repoFolder}", "${gitopsOrgUrl}/${repo}.git", "${branch}", 'git-creds')
                 }
             }

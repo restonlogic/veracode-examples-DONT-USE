@@ -1,6 +1,5 @@
 @Library(['jenkins-library@main']) _
 def buildNumber = env.BUILD_NUMBER
-def workspace   = env.WORKSPACE
 pipeline {
     agent any
     options {
@@ -19,7 +18,8 @@ pipeline {
                 gitopsOrgUrl = genericsteps.getSecretString('gitops-org-url')
                 repo = genericsteps.getSecretString('gitops-repo')
                 branch = genericsteps.getSecretString('gitops-branch')
-                repoFolder  = "${workspace}/repos/${repo}/aws/k3s-terraform-cluster"
+                repoFolder  = "/repos/${repo}"
+                projectDir  = "${repoFolder}/aws/k3s-terraform-cluster"
                 genericsteps.checkoutGitRepository("${repoFolder}", "${gitopsOrgUrl}/${repo}.git", "${branch}", 'git-creds')
               }
           }
@@ -28,7 +28,7 @@ pipeline {
       stage ("Pre-Build Setup") {
         steps {
           script {
-            dir("${repoFolder}") {
+            dir("${projectDir}") {
               sh """
                 echo "Setting env variables"
                 """
@@ -63,7 +63,7 @@ pipeline {
       stage("Veracode Static Code Analysis") {
         steps {
           script {
-            dir("${repoFolder}/microservices/$image") {
+            dir("${projectDir}/microservices/$image") {
             veracode applicationName: "${image}", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
           }
         }
@@ -73,7 +73,7 @@ pipeline {
       stage("Veracode Software Composition Analysis") {
         steps {
           script {
-            dir("${repoFolder}/microservices/$image") {
+            dir("${projectDir}/microservices/$image") {
                 sh """
                 cd app
                 export SRCCLR_API_TOKEN=${veracode_sca_key}
@@ -87,7 +87,7 @@ pipeline {
       stage("Build Image") {
         steps {
           script {
-            dir("${repoFolder}/microservices/$image") {
+            dir("${projectDir}/microservices/$image") {
                 sh """
                 docker build -t $ecr_repo_url:$buildNumber -t $ecr_repo_url:$build_tag -t $ecr_repo_url:$branch .
                 """
@@ -99,7 +99,7 @@ pipeline {
       stage("Push Image to ECR") {
         steps {
           script {
-            dir("${repoFolder}/microservices/$image") {
+            dir("${projectDir}/microservices/$image") {
                 sh """
                 docker login --password $ecr_password --username AWS $ecr_repo_url
                 docker image push --all-tags $ecr_repo_url
@@ -112,7 +112,7 @@ pipeline {
       stage("Prepare Kubernetes Namespace") {
         steps {
           script {
-            dir("${repoFolder}") {
+            dir("${projectDir}") {
               sh """
               kubectl create namespace $image --dry-run=client -o yaml | kubectl apply -f -
               kubectl create secret -n $image docker-registry regcred --docker-server=$ecr_repo_url --docker-username=AWS --docker-password=$ecr_password --docker-email=$acme_email --dry-run=client -o yaml | kubectl apply -f -
@@ -125,7 +125,7 @@ pipeline {
       stage("Generate Kubernetes manifests") {
         steps {
           script {
-            dir("${repoFolder}") {
+            dir("${projectDir}") {
               sh """
               make -f pipelines-as-code/jenkins/Makefile generate-manifests \
                       serviceName=$image \
@@ -145,7 +145,7 @@ pipeline {
       stage("Deploy Manifests") {
         steps {
           script {
-            dir("${repoFolder}") {
+            dir("${projectDir}") {
               sh """
               kubectl apply -f ${image}.yaml
               kubectl apply -f ingress.yaml
@@ -157,7 +157,7 @@ pipeline {
 
     stage("Healthcheck") {
       steps {
-        dir("${repoFolder}") {
+        dir("${projectDir}") {
           sh """
             bash -c 'while [[ "\$(curl -s -o /dev/null -w ''%{http_code}'' http://${ext_lb_dns}/${image}/)" != "200" ]]; do echo "waiting for $image healtheck to pass, sleeping.";\\sleep 5; done; echo "$image url: http://${ext_lb_dns}/${image}/"'
           """
