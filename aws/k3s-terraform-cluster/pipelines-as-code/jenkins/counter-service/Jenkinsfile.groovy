@@ -135,7 +135,7 @@ pipeline {
                       imageTag=$build_tag \
                       nameSpace=$image \
                       pathPrefix="/$image" \
-                      repoFolder=${repoFolder}
+                      repoFolder=${projectDir}
               """
           }
         }
