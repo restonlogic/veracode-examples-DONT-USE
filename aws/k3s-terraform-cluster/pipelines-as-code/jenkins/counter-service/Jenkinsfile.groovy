@@ -1,5 +1,6 @@
 @Library(['jenkins-library@main']) _
 def buildNumber = env.BUILD_NUMBER
+def workspace   = env.WORKSPACE
 pipeline {
     agent any
     options {
@@ -18,7 +19,7 @@ pipeline {
                 gitopsOrgUrl = genericsteps.getSecretString('gitops-org-url')
                 repo = genericsteps.getSecretString('gitops-repo')
                 branch = genericsteps.getSecretString('gitops-branch')
-                repoFolder  = "/repos/${repo}/aws/k3s-terraform-cluster"
+                repoFolder  = "${workspace}/repos/${repo}/aws/k3s-terraform-cluster"
                 genericsteps.checkoutGitRepository("${repoFolder}", "${gitopsOrgUrl}/${repo}.git", "${branch}", 'git-creds')
               }
           }
