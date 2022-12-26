@@ -229,7 +229,7 @@ if [ $action = "apply" ]; then
     while [ $i -eq 0 ];
     do
         secret=$(aws secretsmanager --region $REGION list-secret-version-ids --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.Versions[]')
-        if [ -z $secret ]; then
+        if [[ -z $secret ]]; then
             printf "${BBLUE}Waiting for K3s Kubeconfig to be added to secrets manager. Sleeping for 5 seconds.${NC}\n"
             sleep 5s
         else
