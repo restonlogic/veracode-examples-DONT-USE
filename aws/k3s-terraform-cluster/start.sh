@@ -228,13 +228,13 @@ if [ $action = "apply" ]; then
     i=0
     while [ $i -eq 0 ];
     do
-        kubeconfig=$(aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString')
+        kubeconfig=$(aws secretsmanager --region $REGION get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString')
         if [[ $kubeconfig = '{"":""}' ]]; then
             printf "${BBLUE}Waiting for K3s Kubeconfig to be added to secrets manager. Sleeping for 5 seconds.${NC}\n"
             sleep 5s
         else
             printf "${GREEN}K3s Kubeconfig has been added to secrets manager successfully!${NC}\n"
-            aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
+            aws secretsmanager --region $REGION get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
             ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
             k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
             yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
