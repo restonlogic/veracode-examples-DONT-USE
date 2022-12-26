@@ -239,6 +239,7 @@ if [ $action = "apply" ]; then
             yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
             export KUBECONFIG=$k3s_kubeconfig
             ((i++))
+            break
         fi
     done
 
