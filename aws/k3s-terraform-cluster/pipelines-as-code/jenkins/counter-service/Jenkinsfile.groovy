@@ -1,7 +1,7 @@
 @Library(['jenkins-library@main']) _
 def buildNumber = env.BUILD_NUMBER
 pipeline {
-    agent { label 'master' }
+    agent { label 'built-in' }
     options {
         ansiColor('xterm')
         disableConcurrentBuilds()
