@@ -238,8 +238,7 @@ if [ $action = "apply" ]; then
             k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
             yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
             export KUBECONFIG=$k3s_kubeconfig
-            ((i++))
-            break
+            i=1
         fi
     done
 
