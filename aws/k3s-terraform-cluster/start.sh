@@ -230,17 +230,29 @@ if [ $action = "apply" ]; then
     sleep 4m
 
     k3s_kubeconfig=/tmp/k3s_kubeconfig
-    aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
-    ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
-    k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
-    yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
-    export KUBECONFIG=$k3s_kubeconfig
-
-    printf "${GREEN}Infrastructure has been successfully setup${NC}\n"
+    i=0
+    while [ $i -eq 0 ];
+    do
+        kubeconfig=$(aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString')
+        if [ $kubeconfig = '{"":""}' ]; then
+            printf "${BBLUE}Waiting for K3s Kubeconfig to be added to secrets manager. Sleeping for 5 seconds.${NC}\n"
+            sleep 5s
+        else
+            echo "${GREEN}K3s Kubeconfig has been added to secrets manager successfully!${NC}"
+            echo $kubeconfig > $k3s_kubeconfig
+            ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
+            k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
+            yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
+            export KUBECONFIG=$k3s_kubeconfig
+            ((i++))
+        fi
+    done
 
     cd ${PWD}/k3s_services
     bash ./run.sh $action
     cd ..
+
+    printf "${GREEN}Infrastructure has been successfully setup${NC}\n"
 
     jenkins_pass=$(aws secretsmanager --region $REGION get-secret-value --secret-id /${NAME}/${ENVIRONMENT}/jenkins-secrets --query SecretString --output text | jq -r '."jenkins-admin-password"')
     skooner_token=$(kubectl get secret -n default skooner-sa-token -o json | jq -r '.data.token' | base64 -d)
