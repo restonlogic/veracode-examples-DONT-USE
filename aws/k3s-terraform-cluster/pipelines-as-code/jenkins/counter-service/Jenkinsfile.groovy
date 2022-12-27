@@ -64,7 +64,10 @@ pipeline {
         steps {
           script {
             dir("${projectDir}/microservices/$image") {
-            veracode applicationName: "${image}", criticality: 'Medium', debug: true, fileNamePattern: '', pHost: '', pPassword: '', pUser: '', replacementPattern: '', sandboxName: '', scanExcludesPattern: '', scanIncludesPattern: '', scanName: "${buildNumber}", uploadExcludesPattern: '', uploadIncludesPattern: 'app/server.js', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+            sh """
+            zip app/server-js.zip app/server.js
+            """
+            veracode applicationName: "${image}", debug: true, deleteincompletescan: 1, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app/server-js.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
           }
         }
       }
