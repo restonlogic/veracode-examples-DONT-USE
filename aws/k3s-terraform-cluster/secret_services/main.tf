@@ -29,7 +29,6 @@ module "veracode_secrets" {
   secret_string = jsonencode({
     veracode-api-id        = var.veracode_api_id
     veracode-api-key       = var.veracode_api_key
-    veracode-sca-key       = var.veracode_sca_key
   })
 }
 

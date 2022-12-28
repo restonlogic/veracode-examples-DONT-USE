@@ -6,7 +6,6 @@ GIT_PAT_USER=$2
 GIT_PAT_TOKEN=$3
 VERACODE_API_ID=$4
 VERACODE_API_KEY=$5
-VERACODE_SCA_KEY=$6
 
 NAME=$(jq '.global_config.name' -r ../manifest.json)
 ENVIRONMENT=$(jq '.global_config.environment' -r ../manifest.json)
@@ -50,8 +49,7 @@ apply)
         -var=git_pat_user=$GIT_PAT_USER \
         -var=git_pat_token=$GIT_PAT_TOKEN \
         -var=veracode_api_id=$VERACODE_API_ID \
-        -var=veracode_api_key=$VERACODE_API_KEY \
-        -var=veracode_sca_key=$VERACODE_SCA_KEY
+        -var=veracode_api_key=$VERACODE_API_KEY
     ;;
 destroy)
     echo "Running Terraform Destroy"
@@ -60,8 +58,7 @@ destroy)
         -var=git_pat_user=$GIT_PAT_USER \
         -var=git_pat_token=$GIT_PAT_TOKEN \
         -var=veracode_api_id=$VERACODE_API_ID \
-        -var=veracode_api_key=$VERACODE_API_KEY \
-        -var=veracode_sca_key=$VERACODE_SCA_KEY
+        -var=veracode_api_key=$VERACODE_API_KEY
     ;;
 plan)
     echo "Running Terraform Plan"
@@ -70,7 +67,6 @@ plan)
         -var=git_pat_user=$GIT_PAT_USER \
         -var=git_pat_token=$GIT_PAT_TOKEN \
         -var=veracode_api_id=$VERACODE_API_ID \
-        -var=veracode_api_key=$VERACODE_API_KEY \
-        -var=veracode_sca_key=$VERACODE_SCA_KEY
+        -var=veracode_api_key=$VERACODE_API_KEY
     ;;
 esac

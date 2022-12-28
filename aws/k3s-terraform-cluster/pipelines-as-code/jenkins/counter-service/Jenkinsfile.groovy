@@ -43,8 +43,8 @@ pipeline {
                                   returnStdout: true).trim()
                 veracode_api_key = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-api-key\"'",
                                   returnStdout: true).trim()
-                veracode_sca_key = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-sca-key\"'",
-                                  returnStdout: true).trim()
+                // veracode_sca_key = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/veracode-secrets --query SecretString --output text | jq -r '.\"veracode-sca-key\"'",
+                //                   returnStdout: true).trim()
                 ecr_repo_url   = sh(script: "aws secretsmanager get-secret-value --region $region --secret-id /$name/$env/ecr-repo/$image | jq -r '.SecretString'",
                                   returnStdout: true).trim()
                 ecr_password   = sh(script: "aws ecr get-login-password --region $region", returnStdout: true).trim()

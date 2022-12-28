@@ -36,7 +36,6 @@ usage() {
     -cea, --certmanager-email-address; certificate manager email address to use.
     -vid, --veracode-api-id; veracode api id.
     -vik, --veracode-api-key; veracode api key.
-    -sca, --veracode-sca-key; veracode sca key.
     " | column -t -s ";"
 }
 
@@ -111,10 +110,6 @@ for pass in 1 2; do
                 veracode_api_key=$2
                 shift
                 ;;
-            -sca | --veracode-sca-key)
-                veracode_sca_key=$2
-                shift
-                ;;
             -v | --verbose) VERBOSE=$(($VERBOSE + 1)) ;;
             --*) error $1 ;;
             -*) if [ $pass -eq 1 ]; then
@@ -145,7 +140,7 @@ if [ -n "$*" ]; then
     exit 1
 fi
 
-if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $certmanager_email_address ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ] || [ -z $veracode_sca_key ]; then
+if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $certmanager_email_address ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ]; then
     echo "missing parameters, please see options below"
     usage
     exit 1
@@ -211,7 +206,7 @@ if [ $action = "apply" ]; then
 
     # Create Secrets
     cd ${PWD}/secret_services
-    bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key $veracode_sca_key
+    bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key
     cd ..
 
     # Create Network
@@ -286,7 +281,7 @@ if [ $action = "destroy" ]; then
 
     # Destroy Secrets
     cd ${PWD}/secret_services
-    bash ./run.sh $action $git_user $git_token
+    bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key
     cd ..
     
 fi
