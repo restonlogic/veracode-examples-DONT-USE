@@ -65,27 +65,27 @@ pipeline {
           script {
             dir("${projectDir}/microservices/$image") {
             sh """
-            zip app/server-js.zip app/server.js
+            zip -r app.zip app
             """
-            veracode applicationName: "${image}", createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app/server-js.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+            veracode applicationName: "${image}", createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
           }
         }
       }
     }
   
-      stage("Veracode Software Composition Analysis") {
-        steps {
-          script {
-            dir("${projectDir}/microservices/$image") {
-                sh """
-                cd app
-                export SRCCLR_API_TOKEN=${veracode_sca_key}
-                curl -sSL https://download.sourceclear.com/ci.sh | sh
-                """
-          }
-        }
-      }
-    }
+    //   stage("Veracode Software Composition Analysis") {
+    //     steps {
+    //       script {
+    //         dir("${projectDir}/microservices/$image") {
+    //             sh """
+    //             cd app
+    //             export SRCCLR_API_TOKEN=${veracode_sca_key}
+    //             curl -sSL https://download.sourceclear.com/ci.sh | sh
+    //             """
+    //       }
+    //     }
+    //   }
+    // }
     
       stage("Build Image") {
         steps {
