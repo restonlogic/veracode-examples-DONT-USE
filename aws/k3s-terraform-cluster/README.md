@@ -39,7 +39,7 @@ aws configure
 
 ## Workflow
 
-<img src="/diagrams/veracode-workflow.png" alt="veracode-workflow">
+![veracode-workflow](https://raw.githubusercontent.com/restonlogic/veracode-examples/main/aws/k3s-terraform-cluster/diagrams/veracode-workflow.png)
 
 
 ## Deploy
