@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "cb-bucket" {
   bucket = "${var.org}-${var.env}-cb-${random_id.cb-id.dec}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_acl" "example" {
@@ -53,7 +54,12 @@ resource "aws_iam_role_policy" "cb-policy" {
         "ec2:DeleteNetworkInterface",
         "ec2:DescribeSubnets",
         "ec2:DescribeSecurityGroups",
-        "ec2:DescribeVpcs"
+        "ec2:DescribeVpcs",
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
       ],
       "Resource": "*"
     },
@@ -78,11 +84,16 @@ resource "aws_iam_role_policy" "cb-policy" {
     {
       "Effect": "Allow",
       "Action": [
-        "s3:*"
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetBucketAcl",
+        "s3:GetBucketLocation"
       ],
       "Resource": [
-        "${aws_s3_bucket.cb-bucket.arn}",
-        "${aws_s3_bucket.cb-bucket.arn}/*"
+        "${aws_s3_bucket.cb-bucket.arn}*",
+        "${aws_s3_bucket.codepipeline_bucket.arn}*"
+
       ]
     }
   ]
@@ -110,17 +121,6 @@ resource "aws_codebuild_project" "codebuild-lambda" {
     image                       = "aws/codebuild/standard:1.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
-
-    environment_variable {
-      name  = "SOME_KEY1"
-      value = "SOME_VALUE1"
-    }
-
-    environment_variable {
-      name  = "SOME_KEY2"
-      value = "SOME_VALUE2"
-      type  = "PARAMETER_STORE"
-    }
   }
 
   logs_config {
@@ -151,8 +151,7 @@ resource "aws_codebuild_project" "codebuild-lambda" {
     vpc_id = aws_vpc.main.id
 
     subnets = [
-      aws_subnet.subnet1.id,
-      aws_subnet.subnet2.id,
+      aws_subnet.subnet2.id
     ]
 
     security_group_ids = [
