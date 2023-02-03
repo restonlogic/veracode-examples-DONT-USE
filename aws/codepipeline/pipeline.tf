@@ -48,28 +48,6 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
-
-  stage {
-    name = "Deploy"
-
-    action {
-      name            = "Deploy"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "CloudFormation"
-      input_artifacts = ["build_output"]
-      version         = "1"
-
-      configuration = {
-        ActionMode     = "REPLACE_ON_FAILURE"
-        Capabilities   = "CAPABILITY_AUTO_EXPAND,CAPABILITY_IAM"
-        OutputFileName = "CreateStackOutput.json"
-        StackName      = "MyStack"
-        TemplatePath   = "build_output::sam-templated.yaml"
-      }
-    }
-  }
-
   depends_on = [
     aws_codebuild_project.codebuild-lambda
   ]
@@ -86,7 +64,7 @@ resource "aws_s3_bucket_acl" "codepipeline_bucket_acl" {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name = "test-role"
+  name = "codepipeline-role"
 
   assume_role_policy = <<EOF
 {
@@ -141,7 +119,8 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         "kms:GenerateDataKey*",
         "kms:DescribeKey",
         "codebuild:BatchGetBuilds",
-        "codebuild:StartBuild"
+        "codebuild:StartBuild",
+        "lambda:InvokeFunction"
       ],
       "Resource": "*"
     }

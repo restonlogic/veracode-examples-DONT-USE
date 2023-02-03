@@ -9,7 +9,7 @@ resource "aws_s3_bucket_acl" "example" {
 }
 
 resource "aws_iam_role" "code-build-role" {
-  name = "code-build-role"
+  name = "codebuild-role"
 
   assume_role_policy = <<EOF
 {
@@ -42,7 +42,13 @@ resource "aws_iam_role_policy" "cb-policy" {
       "Action": [
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
-        "logs:PutLogEvents"
+        "logs:PutLogEvents",
+        "iam:CreateRole",
+        "iam:GetRole",
+        "iam:PassRole",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
+        "lambda:*"
       ]
     },
     {
@@ -92,7 +98,8 @@ resource "aws_iam_role_policy" "cb-policy" {
       ],
       "Resource": [
         "${aws_s3_bucket.cb-bucket.arn}*",
-        "${aws_s3_bucket.codepipeline_bucket.arn}*"
+        "${aws_s3_bucket.codepipeline_bucket.arn}*",
+        "arn:aws:lambda:*:${data.aws_caller_identity.my-id.account_id}:function:*"
 
       ]
     }
