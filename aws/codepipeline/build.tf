@@ -65,7 +65,8 @@ resource "aws_iam_role_policy" "cb-policy" {
         "kms:Decrypt",
         "kms:ReEncrypt*",
         "kms:GenerateDataKey*",
-        "kms:DescribeKey"
+        "kms:DescribeKey",
+        "secretsmanager:GetSecretValue"
       ],
       "Resource": "*"
     },
