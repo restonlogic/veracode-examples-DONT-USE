@@ -1,4 +1,4 @@
 variable "github-repo" {}
-variable "codestar-connection-arn" {}
+variable "connection-arn" {}
 variable "org" {}
 variable "env" {}
