@@ -12,14 +12,14 @@ resource "aws_subnet" "subnet1" {
 }
 
 resource "aws_subnet" "subnet2" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.16.0/20"
-  availability_zone       = "us-east-1b"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.16.0/20"
+  availability_zone = "us-east-1b"
 }
 
 //Gateways & EIP
 resource "aws_eip" "nat-eip" {
-  vpc      = true
+  vpc = true
 }
 
 resource "aws_nat_gateway" "nat-gw" {

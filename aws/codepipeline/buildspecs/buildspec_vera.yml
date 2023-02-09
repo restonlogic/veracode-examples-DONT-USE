@@ -1,0 +1,21 @@
+version: 0.2
+
+run-as: root
+
+phases:
+  install:
+    commands:
+      - echo executing install stage
+  pre_build:
+    commands:
+      - echo unzipping lambda
+      - unzip *.zip && rm *.zip
+      - echo zipping files for scanning
+      - zip lambda.zip ./*
+  build:
+    commands:
+      - echo executing build phase
+      - java -jar /opt/veracode/api-wrapper.jar -action uploadandscan -vid $VID -vkey $VKEY -appname verademo-codepipeline -createprofile true -version $(date +%Y-%m-%d-%H:%M) -criticality medium -filepath lambda.zip
+  post_build:
+    commands:
+      - echo executing post build phase
