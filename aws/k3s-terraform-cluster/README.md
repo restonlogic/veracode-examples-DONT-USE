@@ -61,7 +61,7 @@ docker run -v ~/.aws/credentials:/root/.aws/credentials \
     -e VERACODE_API_ID="" \
     -e VERACODE_API_KEY="" \
     -e AWS_PROFILE="" \
-    engrave/k3s-terraform-cluster:0.4
+    engrave/k3s-terraform-cluster:0.6
 ```
 Below you will find the commands and their options
 
