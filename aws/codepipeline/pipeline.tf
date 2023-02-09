@@ -24,6 +24,12 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
+        Owner
+        Repo
+        Branch
+        OAuthToken = 
+        PollForSourceChanges = "True"
+
         ConnectionArn    = var.connection-arn
         FullRepositoryId = var.github-repo
         BranchName       = "main"
