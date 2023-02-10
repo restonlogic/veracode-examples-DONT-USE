@@ -19,7 +19,7 @@ resource "aws_codepipeline" "codepipeline" {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeStarSourceConnection"
+      provider         = "GITHUB"
       version          = "1"
       output_artifacts = ["source_output"]
 

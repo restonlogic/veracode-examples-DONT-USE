@@ -24,7 +24,7 @@ resource "aws_codebuild_project" "lambda" {
   service_role  = aws_iam_role.code-build-role.arn
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   cache {
@@ -57,8 +57,8 @@ resource "aws_codebuild_project" "lambda" {
   }
 
   source {
-    type      = "NO_SOURCE"
-    buildspec = "buildspecs/buildspec_lambda.yml"
+    type      = "CODEPIPELINE"
+    buildspec = "./buildspecs/buildspec_lambda.yml"
   }
 
   vpc_config {
@@ -84,7 +84,7 @@ resource "aws_codebuild_project" "veracode" {
   service_role  = aws_iam_role.code-build-role.arn
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   cache {
@@ -126,8 +126,8 @@ resource "aws_codebuild_project" "veracode" {
   }
 
   source {
-    type      = "NO_SOURCE"
-    buildspec = "buildspecs/buildspec_vera.yml"
+    type      = "CODEPIPELINE"
+    buildspec = "./buildspecs/buildspec_vera.yml"
   }
 
   vpc_config {
