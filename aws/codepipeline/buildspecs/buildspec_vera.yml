@@ -9,7 +9,7 @@ phases:
   pre_build:
     commands:
       - echo unzipping lambda
-      - unzip *.zip && rm *.zip
+      - unzip \*.zip && rm *.zip
       - echo zipping files for scanning
       - zip lambda.zip ./*
   build:

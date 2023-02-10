@@ -58,7 +58,7 @@ resource "aws_codebuild_project" "lambda" {
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "./buildspecs/buildspec_lambda.yml"
+    buildspec = "./aws/codepipeline/buildspecs/buildspec_lambda.yml"
   }
 
   vpc_config {
@@ -127,7 +127,7 @@ resource "aws_codebuild_project" "veracode" {
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "./buildspecs/buildspec_vera.yml"
+    buildspec = "./aws/codepipeline/buildspecs/buildspec_vera.yml"
   }
 
   vpc_config {
