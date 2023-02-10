@@ -8,8 +8,9 @@ phases:
       - echo executing install stage
   pre_build:
     commands:
+      - cd $BUILD_DIR
       - echo unzipping lambda
-      - unzip \*.zip && rm *.zip
+      - unzip *.zip && rm *.zip
       - echo zipping files for scanning
       - zip lambda.zip ./*
   build:
