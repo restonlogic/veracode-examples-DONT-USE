@@ -16,7 +16,7 @@ phases:
   build:
     commands:
       - echo executing build phase
-      - java -jar /opt/veracode/api-wrapper.jar -action uploadandscan -vid $VID -vkey $VKEY -appname verademo-codepipeline -createprofile true -version $(date +%Y-%m-%d-%H:%M) -criticality medium -filepath lambda.zip
+      - java -jar /opt/veracode/api-wrapper.jar -action uploadandscan -vid $VID -vkey $VKEY -appname lambda-helloworld -createprofile true -version $(date +%Y-%m-%d-%H:%M) -criticality medium -filepath lambda.zip
   post_build:
     commands:
       - echo executing post build phase

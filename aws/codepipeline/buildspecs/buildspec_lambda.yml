@@ -13,6 +13,7 @@ phases:
       - terraform --version
   pre_build:
     commands:
+      - cd $BUILD_DIR
       - echo executing pre build phase
       - bash ./run.sh plan
   build:
