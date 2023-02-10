@@ -38,6 +38,7 @@ resource "aws_iam_role_policy" "cb-policy" {
         "iam:PassRole",
         "iam:ListRolePolicies",
         "iam:ListAttachedRolePolicies",
+        "iam:TagRole",
         "lambda:*"
       ]
     },
