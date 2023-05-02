@@ -117,7 +117,7 @@ resource "aws_autoscaling_group" "k3s_workers_asg" {
   }
 
   tag {
-    key                 = "k8s.io/cluster-autoscaler/k3s-cluster-${var.global_config.environment}"
+    key                 = "k8s.io/cluster-autoscaler/k3s-cluster"
     value               = ""
     propagate_at_launch = true
   }
