@@ -245,26 +245,26 @@ if [ $action = "apply" ]; then
 
 fi
 
-if [ $action = "destroy" ] && [ ! -z $module_to_destroy ]; then
+if [ $action = "destroy" ] && [ -z $module_to_destroy ]; then
 
-    # Destroy module
-    cd ${PWD}/$module_to_destroy
+    # Destroy K3s Cluster
+    cd ${PWD}/k3s_cluster
     bash ./run.sh $action
     cd ..
-    
+
+    # Destroy Network
+    cd ${PWD}/network_services
+    bash ./run.sh $action
+    cd ..
+
+    # Destroy Secrets
+    cd ${PWD}/secret_services
+    bash ./run.sh $action
+    cd ..
+
     else
         # Destroy K3s Cluster
-        cd ${PWD}/k3s_cluster
-        bash ./run.sh $action
-        cd ..
-
-        # Destroy Network
-        cd ${PWD}/network_services
-        bash ./run.sh $action
-        cd ..
-
-        # Destroy Secrets
-        cd ${PWD}/secret_services
+        cd ${PWD}/$module_to_destroy
         bash ./run.sh $action
         cd ..
 fi
