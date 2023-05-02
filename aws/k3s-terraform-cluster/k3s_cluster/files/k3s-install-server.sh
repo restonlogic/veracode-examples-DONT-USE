@@ -179,7 +179,7 @@ K3S_VERSION=$(curl --silent https://api.github.com/repos/k3s-io/k3s/releases/lat
 K3S_VERSION="${k3s_version}"
 %{ endif }
 
-first_instance=$(aws ec2 describe-instances --filters Name=tag-value,Values=k3s-server Name=instance-state-name,Values=running --query 'sort_by(Reservations[].Instances[], &LaunchTime)[:-1].[InstanceId]' --output text | head -n1)
+first_instance=$(aws ec2 describe-instances --filters Name=tag-value,Values=k3s-server-${environment} Name=instance-state-name,Values=running --query 'sort_by(Reservations[].Instances[], &LaunchTime)[:-1].[InstanceId]' --output text | head -n1)
 instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
 if [[ "$first_instance" == "$instance_id" ]]; then

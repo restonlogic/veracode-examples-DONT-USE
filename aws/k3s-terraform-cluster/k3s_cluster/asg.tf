@@ -1,7 +1,7 @@
 resource "aws_autoscaling_group" "k3s_servers_asg" {
   name                      = "${var.common_prefix}-servers-asg-${var.global_config.environment}"
   wait_for_capacity_timeout = "5m"
-  vpc_zone_identifier       = data.terraform_remote_state.vpc.outputs.public_subnets
+  vpc_zone_identifier       = data.terraform_remote_state.vpc.outputs.private_subnets
 
   lifecycle {
     create_before_destroy = true
@@ -9,12 +9,6 @@ resource "aws_autoscaling_group" "k3s_servers_asg" {
   }
 
   mixed_instances_policy {
-    instances_distribution {
-      on_demand_base_capacity                  = 0
-      on_demand_percentage_above_base_capacity = 20
-      spot_allocation_strategy                 = "capacity-optimized"
-    }
-
     launch_template {
       launch_template_specification {
         launch_template_id = aws_launch_template.k3s_server.id
@@ -22,7 +16,7 @@ resource "aws_autoscaling_group" "k3s_servers_asg" {
       }
 
       dynamic "override" {
-        for_each = var.instance_types
+        for_each = local.instance_types
         content {
           instance_type     = override.value
           weighted_capacity = "1"
@@ -56,26 +50,14 @@ resource "aws_autoscaling_group" "k3s_servers_asg" {
 
   tag {
     key                 = "k3s-instance-type"
-    value               = "k3s-server"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "k8s.io/cluster-autoscaler/enabled"
-    value               = ""
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "k8s.io/cluster-autoscaler/k3s-cluster"
-    value               = ""
+    value               = "k3s-server-${var.global_config.environment}"
     propagate_at_launch = true
   }
 }
 
 resource "aws_autoscaling_group" "k3s_workers_asg" {
   name                = "${var.common_prefix}-workers-asg-${var.global_config.environment}"
-  vpc_zone_identifier = data.terraform_remote_state.vpc.outputs.public_subnets
+  vpc_zone_identifier = data.terraform_remote_state.vpc.outputs.private_subnets
 
   lifecycle {
     create_before_destroy = true
@@ -83,12 +65,6 @@ resource "aws_autoscaling_group" "k3s_workers_asg" {
   }
 
   mixed_instances_policy {
-    instances_distribution {
-      on_demand_base_capacity                  = 0
-      on_demand_percentage_above_base_capacity = 20
-      spot_allocation_strategy                 = "capacity-optimized"
-    }
-
     launch_template {
       launch_template_specification {
         launch_template_id = aws_launch_template.k3s_worker.id
@@ -96,7 +72,7 @@ resource "aws_autoscaling_group" "k3s_workers_asg" {
       }
 
       dynamic "override" {
-        for_each = var.instance_types
+        for_each = local.instance_types
         content {
           instance_type     = override.value
           weighted_capacity = "1"
@@ -130,7 +106,7 @@ resource "aws_autoscaling_group" "k3s_workers_asg" {
 
   tag {
     key                 = "k3s-instance-type"
-    value               = "k3s-worker"
+    value               = "k3s-worker-${var.global_config.environment}"
     propagate_at_launch = true
   }
 
@@ -141,7 +117,7 @@ resource "aws_autoscaling_group" "k3s_workers_asg" {
   }
 
   tag {
-    key                 = "k8s.io/cluster-autoscaler/k3s-cluster"
+    key                 = "k8s.io/cluster-autoscaler/k3s-cluster-${var.global_config.environment}"
     value               = ""
     propagate_at_launch = true
   }

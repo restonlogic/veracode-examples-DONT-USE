@@ -25,6 +25,15 @@ resource "aws_security_group_rule" "ingress_kubeapi" {
   from_port         = var.kube_api_port
   to_port           = var.kube_api_port
   protocol          = "tcp"
+  cidr_blocks       = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
+  security_group_id = aws_security_group.allow_strict.id
+}
+
+resource "aws_security_group_rule" "ingress_kubeapi_public_subnet" {
+  type              = "ingress"
+  from_port         = var.kube_api_port
+  to_port           = var.kube_api_port
+  protocol          = "tcp"
   cidr_blocks       = data.terraform_remote_state.vpc.outputs.public_subnets_cidr_blocks
   security_group_id = aws_security_group.allow_strict.id
 }
@@ -73,7 +82,7 @@ resource "aws_security_group_rule" "allow_lb_kubeapi_traffic" {
   from_port         = var.kube_api_port
   to_port           = var.kube_api_port
   protocol          = "tcp"
-  cidr_blocks       = ["${chomp(data.http.myip.response_body)}/32"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.allow_strict.id
 }
 
@@ -94,47 +103,13 @@ resource "aws_security_group" "efs_sg" {
     from_port   = 2049
     to_port     = 2049
     protocol    = "tcp"
-    cidr_blocks = data.terraform_remote_state.vpc.outputs.public_subnets_cidr_blocks
+    cidr_blocks = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
   }
 
   tags = merge(
     local.global_tags,
     {
       "Name" = lower("${var.common_prefix}-efs-sg-${var.global_config.environment}")
-    }
-  )
-}
-
-resource "aws_security_group" "lambda_sg" {
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
-  name        = "${var.common_prefix}-lambda-sg-${var.global_config.environment}"
-  description = "Allow lambda function to access kubeapi"
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = var.kube_api_port
-    to_port     = var.kube_api_port
-    protocol    = "tcp"
-    cidr_blocks = data.terraform_remote_state.vpc.outputs.public_subnets_cidr_blocks
-  }
-
-  ingress {
-    protocol  = "-1"
-    self      = true
-    from_port = 0
-    to_port   = 0
-  }
-
-  tags = merge(
-    local.global_tags,
-    {
-      "Name" = lower("${var.common_prefix}-lambda-sg-${var.global_config.environment}")
     }
   )
 }
@@ -148,7 +123,42 @@ resource "aws_security_group" "internal_vpce_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = data.terraform_remote_state.vpc.outputs.public_subnets_cidr_blocks
+    cidr_blocks = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = data.terraform_remote_state.vpc.outputs.private_subnets_cidr_blocks
+  }
+
+  ingress {
+    protocol  = "-1"
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  tags = merge(
+    local.global_tags,
+    {
+      "Name" = lower("${var.common_prefix}-int-vpce-sg-${var.global_config.environment}")
+    }
+  )
+}
+
+resource "aws_security_group" "lambda_sg" {
+  count       = var.global_config.environment == "mgmt" ? 1 : 0
+  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
+  name        = "${var.global_config.name}-lambda-sg-${var.global_config.environment}"
+  description = "Allow lambda function to access"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -168,7 +178,7 @@ resource "aws_security_group" "internal_vpce_sg" {
   tags = merge(
     local.global_tags,
     {
-      "Name" = lower("${var.common_prefix}-int-vpce-sg-${var.global_config.environment}")
+      "Name" = lower("${var.global_config.name}-lambda-sg-${var.global_config.environment}")
     }
   )
 }

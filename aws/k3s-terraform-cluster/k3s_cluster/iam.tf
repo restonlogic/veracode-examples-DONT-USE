@@ -185,7 +185,17 @@ resource "aws_iam_policy" "allow_jenkins" {
           "acm:*",
           "kms:*",
           "cloudfront:*",
-          "sts:*"
+          "elasticfilesystem:*",
+          "sqs:*",
+          "lambda:*",
+          "sts:*",
+          "cognito-idp:*",
+          "cloudformation:*",
+          "sagemaker:*",
+          "apigateway:*",
+          "kafka:*",
+          "xray:*",
+          "kafka-cluster:*"
         ],
         Resource = [
           "*"
@@ -231,56 +241,33 @@ resource "aws_iam_role_policy_attachment" "attach_allow_secrets_jenkins_policy" 
   role       = aws_iam_role.aws_ec2_custom_role.name
   policy_arn = aws_iam_policy.allow_jenkins.arn
 }
-## Lambda
 
-resource "aws_iam_role" "kube_cleaner_lambda_role" {
-  name               = "${var.common_prefix}-kube-cleaner-iam-role-${var.global_config.environment}"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "kube_cleaner_lambda_attachment" {
-  role       = aws_iam_role.kube_cleaner_lambda_role.name
-  policy_arn = aws_iam_policy.kube_cleaner_lambda_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "attach_lambda_vpc_policy" {
-  role       = aws_iam_role.kube_cleaner_lambda_role.name
-  policy_arn = data.aws_iam_policy.AWSLambdaVPCAccessExecutionRole.arn
-}
-
-resource "aws_iam_policy" "kube_cleaner_lambda_policy" {
-  name        = "${var.common_prefix}-kube-cleaner-policy-${var.global_config.environment}"
-  description = "Policy for kube_cleaner_lambda_policy"
+resource "aws_iam_policy" "ebs_metrics_policy" {
+  name        = "${var.common_prefix}-ebs-metrics-policy-${var.global_config.environment}"
+  path        = "/"
+  description = "EBS Metrics Policy"
 
   policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:UpdateSecret",
-          "secretsmanager:DeleteSecret",
-          "secretsmanager:DescribeSecret",
-          "secretsmanager:ListSecrets",
-          "secretsmanager:CreateSecret",
-          "secretsmanager:PutSecretValue",
-          "sqs:SendMessage",
-          "sqs:ReceiveMessage",
-          "sqs:DeleteMessage",
-          "sqs:GetQueueAttributes"
+        "Action" : [
+          "ec2:DescribeVolumes"
         ],
-        Resource = [
-          "*"
-        ]
+        "Resource" : "*",
+        "Effect" : "Allow"
       }
     ]
   })
-
   tags = merge(
     local.global_tags,
     {
-      "Name" = lower("${var.common_prefix}-kube-cleaner-policy-${var.global_config.environment}")
+      "Name" = lower("${var.common_prefix}-ebs-metrics-policy-${var.global_config.environment}")
     }
   )
+}
+
+resource "aws_iam_role_policy_attachment" "attach_ebs_metrics_policy" {
+  role       = aws_iam_role.aws_ec2_custom_role.name
+  policy_arn = aws_iam_policy.ebs_metrics_policy.arn
 }

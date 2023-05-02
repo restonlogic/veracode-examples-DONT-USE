@@ -2,7 +2,7 @@ resource "aws_lb" "k3s_server_lb" {
   name               = "${var.common_prefix}-int-lb-${var.global_config.environment}"
   load_balancer_type = "network"
   internal           = "true"
-  subnets            = data.terraform_remote_state.vpc.outputs.public_subnets
+  subnets            = data.terraform_remote_state.vpc.outputs.private_subnets
 
   enable_cross_zone_load_balancing = true
 

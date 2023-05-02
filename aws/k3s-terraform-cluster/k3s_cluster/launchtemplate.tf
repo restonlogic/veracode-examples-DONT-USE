@@ -1,7 +1,7 @@
 resource "aws_launch_template" "k3s_server" {
   name_prefix   = "${var.common_prefix}-k3s-server-tpl-${var.global_config.environment}"
   image_id      = var.AMIS[var.global_config.region]
-  instance_type = var.default_instance_type
+  instance_type = local.instance_type
   user_data     = data.template_cloudinit_config.k3s_server.rendered
 
   iam_instance_profile {
@@ -36,7 +36,7 @@ resource "aws_launch_template" "k3s_server" {
 resource "aws_launch_template" "k3s_worker" {
   name_prefix   = "${var.common_prefix}-k3s-worker-tpl-${var.global_config.environment}"
   image_id      = var.AMIS[var.global_config.region]
-  instance_type = var.default_instance_type
+  instance_type = local.instance_type
   user_data     = data.template_cloudinit_config.k3s_worker.rendered
 
   iam_instance_profile {

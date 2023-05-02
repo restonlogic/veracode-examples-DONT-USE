@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.47.0"
+      version = "~> 4.50.0"
     }
   }
 }
@@ -18,7 +18,6 @@ provider "aws" {
       created_by   = "Terraform"
     }
   }
-
   ignore_tags {
     key_prefixes = ["k8s.io/"]
   }

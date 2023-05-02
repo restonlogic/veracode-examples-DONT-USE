@@ -5,7 +5,7 @@ data "http" "myip" {
 }
 
 data "aws_ssm_parameter" "remote_state_bucket" {
-  name            = "/tf/${var.global_config.name}/${var.global_config.environment}/tfBucketName"
+  name            = "/tf/${var.global_config.name}/mgmt/tfBucketName"
   with_decryption = true
 }
 
@@ -27,23 +27,8 @@ data "aws_iam_policy" "AmazonEC2ReadOnlyAccess" {
   arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
 }
 
-data "aws_iam_policy" "AWSLambdaVPCAccessExecutionRole" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
 data "aws_iam_policy" "AmazonSSMManagedInstanceCore" {
   arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-data "aws_iam_policy_document" "lambda_assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-  }
 }
 
 data "aws_instances" "k3s_servers" {
@@ -103,12 +88,13 @@ data "template_cloudinit_config" "k3s_server" {
       efs_csi_driver_release           = var.efs_csi_driver_release,
       efs_filesystem_id                = var.cluster_config.efs_persistent_storage ? aws_efs_file_system.k3s_persistent_storage[0].id : "",
       certmanager_release              = var.certmanager_release,
-      certmanager_email_address        = var.cluster_config.certmanager_email_address,
+      certmanager_email_address        = var.certmanager_email_address,
       expose_kubeapi                   = var.cluster_config.expose_kubeapi,
       k3s_tls_san_public               = local.k3s_tls_san_public,
       k3s_url                          = aws_lb.k3s_server_lb.dns_name,
       k3s_tls_san                      = aws_lb.k3s_server_lb.dns_name,
       kubeconfig_secret_name           = local.kubeconfig_secret_name
+      environment                      = var.global_config.environment
     })
   }
 }
