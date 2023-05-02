@@ -82,7 +82,7 @@ variable "certmanager_email_address" {
 
 variable "efs_csi_driver_release" {
   type    = string
-  default = "v1.4.2"
+  default = "v1.5.4"
 }
 
 variable "default_instance_type" {
