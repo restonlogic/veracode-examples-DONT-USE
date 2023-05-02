@@ -130,71 +130,72 @@ done
 
 manifest=manifest.json
 
+# Handle positional arguments
+if [ -n "$*" ]; then
+    echo "$(cmd): Extra arguments -- $*"
+    echo "Try '$(cmd) -h' for more information."
+    exit 1
+fi
+
+if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ]; then
+    echo "missing parameters, please see options below"
+    usage
+    exit 1
+fi
+
+# Set cluster config config
+contents="$(jq --arg name $name '.global_config.name = $name' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+contents="$(jq --arg organization $organization '.global_config.organization = $organization' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+# Set git configuration
+contents="$(jq --arg git_address $git_address '.git_config.gitops_address = $git_address' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+contents="$(jq --arg git_org $git_org '.git_config.gitops_org = $git_org' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+contents="$(jq --arg git_repo $git_repo '.git_config.gitops_repo = $git_repo' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+contents="$(jq --arg git_branch $git_branch '.git_config.gitops_branch = $git_branch' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+contents="$(jq --arg environment $environment '.global_config.environment = $environment' ./$manifest)" &&
+    echo -E "${contents}" >./$manifest
+
+printf "${BBLUE}Starting starting installation of infrastructure${NC}\n"
+
+ACCOUNTID=$(aws sts get-caller-identity | jq -r '.Account')
+NAME=$(jq '.global_config.name' -r ./manifest.json)
+ENVIRONMENT=$(jq '.global_config.environment' -r ./manifest.json)
+REGION=$(jq '.global_config.region' -r ./manifest.json)
+ORG=$(jq '.global_config.organization' -r ./manifest.json)
+
+aws configure set default.region $REGION
+
+BUCKET_NAME="tf-state-${NAME}-${ENVIRONMENT}-${ORG}-${ACCOUNTID}"
+printf "${BBLUE}CREATING TERRAFORM STATE BACKEND BUCKET NAME: ${BUCKET_NAME}${NC}\n"
+printf "${BBLUE}USIING TERRAFORM BACKEND REGION: ${REGION}${NC}\n"
+
+# Disable exitting on error temporarily for ubuntu users. Below command checks to see if bucket exists.
+set +e
+rc=$(aws s3 ls s3://${BUCKET_NAME} >/dev/null 2>&1)
+set -e
+if [ -z $rc ]; then
+    # Create bucket if not exist
+    aws s3 mb s3://$BUCKET_NAME --region $REGION
+else
+    printf "${GREEN}Terraform state bucket exists.skipping${NC}\n"
+fi
+
+# Saving bucket name for future use
+aws ssm put-parameter --name /tf/${NAME}/${ENVIRONMENT}/tfBucketName --overwrite --type String --value $BUCKET_NAME --region $REGION >/dev/null
+
+
 if [ $action = "apply" ]; then
-
-    # Handle positional arguments
-    if [ -n "$*" ]; then
-        echo "$(cmd): Extra arguments -- $*"
-        echo "Try '$(cmd) -h' for more information."
-        exit 1
-    fi
-
-    if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ]; then
-        echo "missing parameters, please see options below"
-        usage
-        exit 1
-    fi
-
-    # Set cluster config config
-    contents="$(jq --arg name $name '.global_config.name = $name' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    contents="$(jq --arg organization $organization '.global_config.organization = $organization' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    # Set git configuration
-    contents="$(jq --arg git_address $git_address '.git_config.gitops_address = $git_address' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    contents="$(jq --arg git_org $git_org '.git_config.gitops_org = $git_org' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    contents="$(jq --arg git_repo $git_repo '.git_config.gitops_repo = $git_repo' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    contents="$(jq --arg git_branch $git_branch '.git_config.gitops_branch = $git_branch' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    contents="$(jq --arg environment $environment '.global_config.environment = $environment' ./$manifest)" &&
-        echo -E "${contents}" >./$manifest
-
-    printf "${BBLUE}Starting starting installation of infrastructure${NC}\n"
-
-    ACCOUNTID=$(aws sts get-caller-identity | jq -r '.Account')
-    NAME=$(jq '.global_config.name' -r ./manifest.json)
-    ENVIRONMENT=$(jq '.global_config.environment' -r ./manifest.json)
-    REGION=$(jq '.global_config.region' -r ./manifest.json)
-    ORG=$(jq '.global_config.organization' -r ./manifest.json)
-
-    aws configure set default.region $REGION
-
-    BUCKET_NAME="tf-state-${NAME}-${ENVIRONMENT}-${ORG}-${ACCOUNTID}"
-    printf "${BBLUE}CREATING TERRAFORM STATE BACKEND BUCKET NAME: ${BUCKET_NAME}${NC}\n"
-    printf "${BBLUE}USIING TERRAFORM BACKEND REGION: ${REGION}${NC}\n"
-
-    # Disable exitting on error temporarily for ubuntu users. Below command checks to see if bucket exists.
-    set +e
-    rc=$(aws s3 ls s3://${BUCKET_NAME} >/dev/null 2>&1)
-    set -e
-    if [ -z $rc ]; then
-        # Create bucket if not exist
-        aws s3 mb s3://$BUCKET_NAME --region $REGION
-    else
-        printf "${GREEN}Terraform state bucket exists.skipping${NC}\n"
-    fi
-
-    # Saving bucket name for future use
-    aws ssm put-parameter --name /tf/${NAME}/${ENVIRONMENT}/tfBucketName --overwrite --type String --value $BUCKET_NAME --region $REGION >/dev/null
 
     # Create Secrets
     cd ${PWD}/secret_services
