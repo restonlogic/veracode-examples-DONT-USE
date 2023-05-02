@@ -14,7 +14,7 @@ NC='\033[0m'
 
 # getopts string
 # This string needs to be updated with the single character options (e.g. -f)
-opts="a:n:e:o:u:t:ga:go:gr:gb:vid:vik:mtd"
+opts="a:n:e:o:u:t:ga:go:gr:gb:vid:vik"
 
 # Gets the command name without path
 cmd() { echo $(basename $0); }
@@ -35,7 +35,6 @@ usage() {
     -gb,--git_branch; provide a Git Branch
     -vid, --veracode-api-id; veracode api id.
     -vik, --veracode-api-key; veracode api key.
-    -mtd, --module-to-destroy; specific module for terraform to destroy
     " | column -t -s ";"
 }
 
@@ -104,10 +103,6 @@ for pass in 1 2; do
                 ;;
             -vik | --veracode-api-key)
                 veracode_api_key=$2
-                shift
-                ;;
-            -mtd | --module-to-destroy)
-                module_to_destroy=$2
                 shift
                 ;;
             -v | --verbose) VERBOSE=$(($VERBOSE + 1)) ;;
@@ -245,7 +240,7 @@ if [ $action = "apply" ]; then
 
 fi
 
-if [ $action = "destroy" ] && [ -z $module_to_destroy ]; then
+if [ $action = "destroy" ]; then
 
     # Destroy K3s Cluster
     cd ${PWD}/k3s_cluster
@@ -261,10 +256,4 @@ if [ $action = "destroy" ] && [ -z $module_to_destroy ]; then
     cd ${PWD}/secret_services
     bash ./run.sh $action
     cd ..
-
-    else
-        # Destroy K3s Cluster
-        cd ${PWD}/$module_to_destroy
-        bash ./run.sh $action
-        cd ..
 fi
