@@ -20,6 +20,6 @@
     "expose_kubeapi": true,
     "efs_persistent_storage": true,
     "certmanager_email_address": "brandon.samuel@restonlogic.com",
-    "cluster_instance_type": "t3.medium"
+    "cluster_instance_type": "t3.2xlarge"
   }
 }
