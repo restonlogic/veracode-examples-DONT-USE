@@ -80,14 +80,6 @@ controller:
     - durable-task:503.v57154d18d478
     - veracode-scan:22.6.18.0
     - servicenow-devops:1.38.0
-    - workflow-api:latest
-    - workflow-step-api:latest
-    - retry4j:0.15.0
-    - gson:2.8.5
-    - commons-lang:3 3.7
-    - jackson2-api:2.11.1
-    - structs:1.21
-    - junit:1.37
 
   JCasC:
     defaultConfig: true
