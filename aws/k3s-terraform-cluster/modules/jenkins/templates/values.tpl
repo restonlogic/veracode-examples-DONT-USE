@@ -17,6 +17,7 @@ controller:
   targetPort: 80
   agentListenerServiceType: NodePort
   serviceExternalTrafficPolicy: Local
+  jenkinsUrl: ${jenkins_url}
   jenkinsUriPrefix: "/jenkins"
   csrf:
     defaultCrumbIssuer:

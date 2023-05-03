@@ -19,3 +19,7 @@ data "aws_secretsmanager_secret_version" "jenkins_secrets" {
 data "aws_secretsmanager_secret_version" "github_secrets" {
   secret_id = data.terraform_remote_state.secrets.outputs.github_secrets_id[0]
 }
+
+data "aws_lb" "lb" {
+  name = "k3s-ext-lb-${var.global_config.environment}"
+}

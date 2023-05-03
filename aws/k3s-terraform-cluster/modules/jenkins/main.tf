@@ -12,6 +12,7 @@ locals {
       gitops_org             = var.git_config.gitops_org
       gitops_repo            = var.git_config.gitops_repo
       gitops_branch          = var.git_config.gitops_branch
+      jenkins_url            = "http://${data.aws_lb.lb.dns_name}/jenkins/"
     }
   )
 }
