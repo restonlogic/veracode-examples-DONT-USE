@@ -60,6 +60,16 @@ pipeline {
         }
       }
 
+    stage("Create Service Now Change Request") {
+        steps {
+          script {
+            dir("${repoFolder}") {
+              snow.changeRequest("$repoFolder", "Deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${env.BUILD_URL}", "Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}")
+          }
+        }
+      }
+    }
+
       stage("Veracode Static Code Analysis") {
         steps {
           script {

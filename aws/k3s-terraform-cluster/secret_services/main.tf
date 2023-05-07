@@ -32,6 +32,16 @@ module "veracode_secrets" {
   })
 }
 
+module "snow_secrets" {
+  source      = "../modules/secrets-manager-secret"
+  secret_name = "/${var.global_config.name}/${var.global_config.environment}/snow-secrets"
+  secret_string = jsonencode({
+    snow-url   = var.snow_url
+    snow-usr   = var.snow_usr
+    snow-pwd   = var.snow_pwd
+  })
+}
+
 resource "random_password" "jenkins_admin_password" {
   length  = 16
   special = false

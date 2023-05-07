@@ -14,7 +14,7 @@ NC='\033[0m'
 
 # getopts string
 # This string needs to be updated with the single character options (e.g. -f)
-opts="a:n:e:o:u:t:ga:go:gr:gb:vid:vik"
+opts="a:n:e:o:u:t:ga:go:gr:gb:vid:vik:surl:susr:spwd"
 
 # Gets the command name without path
 cmd() { echo $(basename $0); }
@@ -35,6 +35,9 @@ usage() {
     -gb,--git_branch; provide a Git Branch
     -vid, --veracode-api-id; veracode api id.
     -vik, --veracode-api-key; veracode api key.
+    -surl, --service-now-url; service now url
+    -susr, --service-now-usr; service now user
+    -spwd, --service-now-pwd; service now password
     " | column -t -s ";"
 }
 
@@ -105,6 +108,18 @@ for pass in 1 2; do
                 veracode_api_key=$2
                 shift
                 ;;
+            -surl | --service-now-url)
+                service_now_url=$2
+                shift
+                ;;
+            -susr | --service-now-usr)
+                service_now_usr=$2
+                shift
+                ;;
+            -spwd | --service-now-pwd)
+                service_now_pwd=$2
+                shift
+                ;;
             -v | --verbose) VERBOSE=$(($VERBOSE + 1)) ;;
             --*) error $1 ;;
             -*) if [ $pass -eq 1 ]; then
@@ -137,7 +152,7 @@ if [ -n "$*" ]; then
     exit 1
 fi
 
-if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ]; then
+if [ -z $action ] || [ -z $name ] || [ -z $environment ] || [ -z $organization ] || [ -z $git_token ] || [ -z $git_user ] || [ -z $git_address ] || [ -z $git_org ] || [ -z $git_repo ] || [ -z $git_branch ] || [ -z $veracode_api_id ] || [ -z $veracode_api_key ] || [ -z $service_now_url ] || [ -z $service_now_usr ] || [ -z $service_now_pwd ]; then
     echo "missing parameters, please see options below"
     usage
     exit 1
@@ -199,7 +214,7 @@ if [ $action = "apply" ]; then
 
     # Create Secrets
     cd ${PWD}/secret_services
-    bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key
+    bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key $service_now_url $service_now_usr $service_now_pwd
     cd ..
 
     # Create Network

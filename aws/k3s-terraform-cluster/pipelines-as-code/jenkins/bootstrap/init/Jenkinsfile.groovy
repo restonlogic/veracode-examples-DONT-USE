@@ -30,20 +30,6 @@ pipeline {
             }
         }
 
-        // stage("Configure Snow Connection") {
-        //     steps {
-        //         script {
-        //             def config = [
-        //                         instanceUrl: env.SERVICENOW_INSTANCE,
-        //                         toolId: env.SERVICENOW_USERNAME.id,
-        //                         passwordCredentialsId: env.SERVICENOW_PASSWORD.id,
-        //                         useOAuth: false
-        //                     ]
-        //         }
-        //     }
-        // }
-
-
         stage("Create Jobs") {
             steps {
                 script {
