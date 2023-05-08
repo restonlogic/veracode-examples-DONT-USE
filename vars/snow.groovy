@@ -28,8 +28,12 @@ def changeRequest(String folder, String short_description, String description, S
     def urgencys = urgency ?: '3'
     def assigned_tos = assigned_to ?: 'DevOps System'
 
-    sh "curl $url/api/sn_chg_rest/change --request POST --header Accept: application/json --header Content-Type: application/json" +
-        ' --data-raw '{
+    sh """
+        curl "$url/api/sn_chg_rest/change" \\
+        --request POST \\
+        --header "Accept: application/json" \\
+        --header "Content-Type: application/json" \\
+        --data-raw '{
         "short_description": "$short_description",
         "description": "$description",
         "work_notes": "$work_notes",
@@ -38,7 +42,7 @@ def changeRequest(String folder, String short_description, String description, S
         "priority": "$prioritys",
         "assigned_to": "$assigned_tos",
         "impact": "$impacts",
-        "urgency": "$urgencys" }'' +
-        " --user '$username':'$password'"
+        "urgency": "$urgencys" }' \\
+        --user '$username':'$password'
     """
 }
