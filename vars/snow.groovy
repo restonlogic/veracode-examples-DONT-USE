@@ -13,12 +13,12 @@ def changeRequest(String folder, String short_description, String description, S
     def username = secrets.getSecretString('snow-username')
     def password = secrets.getSecretString('snow-password')
     def url = secrets.getSecretString('snow-url')
-    def type = type ?: 'Standard'
-    def category = category ?: 'DevOps'
-    def priority = priority ?: '3'
-    def impact = impact ?: '3'
-    def urgency = urgency ?: '3'
-    def assigned_to = assigned_to ?: 'DevOps System'
+    def types = type ?: 'Standard'
+    def categorys = category ?: 'DevOps'
+    def prioritys = priority ?: '3'
+    def impacts = impact ?: '3'
+    def urgencys = urgency ?: '3'
+    def assigned_tos = assigned_to ?: 'DevOps System'
 
     sh """
         curl "$url/api/sn_chg_rest/change" \
@@ -29,12 +29,12 @@ def changeRequest(String folder, String short_description, String description, S
         "short_description": "$short_description",
         "description": "$description",
         "work_notes": "$work_notes",
-        "category": "$category",
-        "type": "$type",
-        "priority": "$priority",
-        "assigned_to": "$assigned_to",
-        "impact": "$impact",
-        "urgency": "$urgency" }' \
+        "category": "$categorys",
+        "type": "$types",
+        "priority": "$prioritys",
+        "assigned_to": "$assigned_tos",
+        "impact": "$impacts",
+        "urgency": "$urgencys" }' \
         --user '$username':'$password'
     """
 }
