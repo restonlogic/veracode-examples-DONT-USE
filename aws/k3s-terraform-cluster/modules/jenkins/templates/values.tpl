@@ -129,6 +129,21 @@ controller:
                     id: "gitops-org-url"
                     secret: "${gitops_org_url}"
                     description: "gitops org url"
+                - string:
+                    scope: GLOBAL
+                    id: "snow-url"
+                    secret: "${snow_url}"
+                    description: "service now url"
+                - string:
+                    scope: GLOBAL
+                    id: "snow-usr"
+                    secret: "${snow_usr}"
+                    description: "service now user"
+                - string:
+                    scope: GLOBAL
+                    id: "snow-pwd"
+                    secret: "${snow_pwd}"
+                    description: "service now password"
 
         security:
           globaljobdslsecurityconfiguration:

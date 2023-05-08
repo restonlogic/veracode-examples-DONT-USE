@@ -6,6 +6,9 @@ locals {
       jenkins_admin_password = jsondecode(data.aws_secretsmanager_secret_version.jenkins_secrets.secret_string)["jenkins-admin-password"]
       git_username           = jsondecode(data.aws_secretsmanager_secret_version.github_secrets.secret_string)["git-username"]
       git_access_token       = jsondecode(data.aws_secretsmanager_secret_version.github_secrets.secret_string)["git-token"]
+      snow_url               = jsondecode(data.aws_secretsmanager_secret_version.snow_secrets.secret_string)["snow-url"]
+      snow_usr               = jsondecode(data.aws_secretsmanager_secret_version.snow_secrets.secret_string)["snow-usr"]
+      snow_pwd               = jsondecode(data.aws_secretsmanager_secret_version.snow_secrets.secret_string)["snow-pwd"]
       gitops_org_url         = "https://${var.git_config.gitops_address}/${var.git_config.gitops_org}"
       gitops_full_url        = "https://${var.git_config.gitops_address}/${var.git_config.gitops_org}/${var.git_config.gitops_repo}.git"
       gitops_address         = var.git_config.gitops_address
