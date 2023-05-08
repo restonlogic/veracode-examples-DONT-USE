@@ -1,11 +1,4 @@
 #!/usr/bin/groovy
-
-/**
- * Pipeline step scripts used to test AWS Infrastructure.
- * @author Andrew Jarombek
- * @since 7/3/2020
- */
-
 /**
  * Setup a Python environment to execute AWS infrastructure tests with boto3.
  * @param directory Directory containing the infrastructure tests.

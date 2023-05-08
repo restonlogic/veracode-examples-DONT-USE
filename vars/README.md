@@ -11,15 +11,12 @@ must exist at the top of the pipeline code.
 
 | Filename                 | Description                                                             |
 | ------------------------ | ----------------------------------------------------------------------- |
-| `cloudformation.groovy`  | Functions containing reusable CloudFormation Stack pipeline steps.      |
-| `dockerhub.groovy`       | Functions containing reusable Dockerhub pipeline steps.                 |
-| `email.groovy`           | Functions containing reusable pipeline steps for sending emails.        |
+| `notifications.groovy`   | Functions containing reusable pipeline steps for sending emails.        |
 | `genericsteps.groovy`    | Functions containing reusable pipeline steps for declarative pipelines. |
 | `git.groovy`             | Functions containing reusable pipeline steps for git/github operations. |
-| `packer.groovy`          | Functions containing reusable Packer pipeline steps.                    |
 | `pipelinejob.groovy`     | Functions containing commonly used Jenkins pipeline steps.              |
-| `saintsxctfsteps.groovy` | Reusable pipeline steps for SaintsXCTF application pipelines.           |
-| `terraform.groovy`       | Functions containing reusable Terraform pipeline steps.                 |
+| `scans.groovy`           | Functions containing commonly used Jenkins pipeline steps.              |
+| `secrets.groovy`         | Functions containing commonly used Jenkins pipeline steps.              |
 
 ### Resources
 

@@ -5,31 +5,14 @@
  */
 import org.apache.commons.lang.RandomStringUtils
 
-def zapScan(String uiEndpoint, String reportsDir) {
+def zapScan(String endpoint, String reportsDir) {
     String randomString = org.apache.commons.lang.RandomStringUtils.random(5, true, true)
     sh """
-        #sudo docker stop zap >/dev/null 2>&1 || true
-        #sudo docker rm zap >/dev/null 2>&1 || true
         mkdir -p reports
         chmod 777 reports
-        sudo docker run --detach --name zap-$randomString -u zap  -p 8080:8080 -v $reportsDir:/zap/reports/:rw -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080  -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.disablekey=true
-        sleep 30
-        sudo docker exec zap-$randomString zap-cli --verbose quick-scan http://$uiEndpoint -l Low
-        #sudo docker exec zap-$randomString zap-cli --verbose report -o $reportsDir/report.html --output-format html
+        docker run --name zap-$randomString -t owasp/zap2docker-stable zap-baseline.py -t $endpoint -l PASS
         sudo docker stop zap-$randomString >/dev/null 2>&1 || true
         sudo docker rm zap-$randomString >/dev/null 2>&1 || true
-    """
-}
-
-def katalon(String katalonAPIKEY) {
-    sh """
-        docker run -t -d --restart always --mount source=katalon-runtime-engines,target=/root/.katalon \
-              -e SERVER_URL=https://analytics.katalon.com \
-              -e KATALON_USERNAME=jalfaro@ttsiglobal.com \
-              -e AGENT_NAME=my_docker_agent \
-              -e TEAM_ID=238793 \
-              -e KATALON_API_KEY=b36d51b9-f028-4ef5-a2a0-085f60086de0 \
-              katalonstudio/agent:latest
     """
 }
 

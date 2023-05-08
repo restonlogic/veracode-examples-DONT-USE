@@ -1,11 +1,4 @@
 #!/usr/bin/groovy
-
-/**
- * Functions used to perform Git/GitHub operations from Jenkins.
- * @author Andrew Jarombek
- * @since 3/15/2020
- */
-
 /**
  * Clone a repository and checkout a specific branch from my GitHub account.
  * @param repository The repository in my GitHub account to clone.

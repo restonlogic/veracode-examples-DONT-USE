@@ -1,11 +1,4 @@
 #!/usr/bin/groovy
-
-/**
- * Generic Jenkins pipeline steps that can be reused throughout the Jenkins server.
- * @author Andrew Jarombek
- * @since 6/22/2020
- */
-
 /**
  * Checkout a repository into a standard 'repo' directory.  Reusing this function makes repository code locations
  * more predictable.
