@@ -7,12 +7,20 @@ import jenkins.model.*
 import hudson.*
 import hudson.model.*
 
-def changeRequest(String folder, String short_description, String description, String work_notes, String category, String type, String priority, String assigned_to, String impact, String urgency) {
+def getSecretString(String secretID) {
+    def jenkinsCredentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials( com.cloudbees.plugins.credentials.common.StandardCredentials.class, Jenkins.instance, null, null );
+    for (creds in jenkinsCredentials) {
+    if(creds.id == secretID){
+        return (creds.getSecret())
+        }
+    }
+}
 
-    evaluate(new File("${folder}/vars/secrets.groovy"))
+def changeRequest(String folder, String short_description, String description, String work_notes, String category, String type, String priority, String assigned_to, String impact, String urgency) {
+    
     def username = getSecretString('snow-usr')
     def password = getSecretString('snow-pwd')
-    def url = secrets.getSecretString('snow-url')
+    def url = getSecretString('snow-url')
     def types = type ?: 'Standard'
     def categorys = category ?: 'DevOps'
     def prioritys = priority ?: '3'
