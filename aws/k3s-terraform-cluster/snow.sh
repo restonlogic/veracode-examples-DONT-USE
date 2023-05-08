@@ -45,15 +45,13 @@ curl "https://dev154568.service-now.com/api/sn_chg_rest/change" \
   "work_notes": "This is an automated CR generated from Jenkins, please review infromation below:",
   "close_code": "Successful",
   "close_notes": "Veracode vulnerability scan ran successfully for application and all tests passing as expected",
-  "state": "3.0",
-  "phase_state": "Closed",
   "category": "DevOps",
   "type": "Standard",
   "priority": "3",
   "assigned_to": "DevOps System",
   "impact": "3",
   "urgency": "3" }' \
---user 'admin':'RmV$7y!fP6zW'
+--user 'admin':'RmV$7y!fP6zW' | jq -r '.result[].task_effective_number'
 
 
 curl "https://dev154568.service-now.com/api/sn_chg_rest/change/a86d556b97e2251017f0f901f053af34" \

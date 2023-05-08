@@ -27,9 +27,8 @@ def changeRequest(String folder, String short_description, String description, S
     def impacts = impact ?: '3'
     def urgencys = urgency ?: '3'
     def assigned_tos = assigned_to ?: 'DevOps System'
-
-    sh """
-        curl "$url/api/sn_chg_rest/change" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
+    def change = sh (returnStdout: true, script: """
+        curl -s "$url/api/sn_chg_rest/change" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
         --data-raw '{
         "short_description": "$short_description",
         "description": "$description",
@@ -39,6 +38,7 @@ def changeRequest(String folder, String short_description, String description, S
         "priority": "$prioritys",
         "assigned_to": "$assigned_tos",
         "impact": "$impacts",
-        "urgency": "$urgencys" }'
-    """
+        "urgency": "$urgencys" }' | jq -r '.result.task_effective_number.value'
+    """).split()
+    return change
 }
