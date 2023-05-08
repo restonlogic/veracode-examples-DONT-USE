@@ -9,9 +9,9 @@ import hudson.model.*
 
 def changeRequest(String folder, String short_description, String description, String work_notes, String category, String type, String priority, String assigned_to, String impact, String urgency) {
 
-    def secrets = load "${folder}/vars/secrets.groovy"
-    def username = secrets.getSecretString('snow-usr')
-    def password = secrets.getSecretString('snow-pwd')
+    evaluate(new File("${folder}/vars/secrets.groovy"))
+    def username = getSecretString('snow-usr')
+    def password = getSecretString('snow-pwd')
     def url = secrets.getSecretString('snow-url')
     def types = type ?: 'Standard'
     def categorys = category ?: 'DevOps'
