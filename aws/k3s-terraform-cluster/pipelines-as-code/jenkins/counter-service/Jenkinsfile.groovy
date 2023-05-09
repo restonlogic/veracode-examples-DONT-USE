@@ -72,6 +72,16 @@ pipeline {
         }
       }
     }
+  
+    stage("Create Service Now Problem") {
+        steps {
+          script {
+            dir("${repoFolder}") {
+            problem_sys_id = snow.problem("Jenkins Pipeline: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id[0]}")
+          }
+        }
+      }
+    }
 
       stage("Veracode Static Code Analysis") {
         steps {
@@ -81,16 +91,6 @@ pipeline {
             zip -r app.zip app
             """
             veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
-          }
-        }
-      }
-    }
-
-    stage("Create Service Now Problem") {
-        steps {
-          script {
-            dir("${repoFolder}") {
-            problem_sys_id = snow.problem("Jenkins Pipeline: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id}")
           }
         }
       }

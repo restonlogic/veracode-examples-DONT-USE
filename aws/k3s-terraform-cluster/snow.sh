@@ -35,7 +35,7 @@ curl "https://dev154568.service-now.com/api/sn_devops/devops/onboarding/status?i
 --header "Accept:application/json" \
 --user 'admin':'RmV$7y!fP6zW'
 
-curl "https://dev154568.service-now.com/api/sn_chg_rest/change" \
+curl -s "https://dev154568.service-now.com/api/sn_chg_rest/change" \
 --request POST \
 --header "Accept: application/json" \
 --header "Content-Type: application/json" \
@@ -51,7 +51,7 @@ curl "https://dev154568.service-now.com/api/sn_chg_rest/change" \
   "assigned_to": "DevOps System",
   "impact": "3",
   "urgency": "3" }' \
---user 'admin':'RmV$7y!fP6zW' | jq -r '.result[].task_effective_number'
+--user 'admin':'RmV$7y!fP6zW' | jq -r '.result.sys_id.value'
 
 
 curl "https://dev154568.service-now.com/api/sn_chg_rest/change/a86d556b97e2251017f0f901f053af34" \
@@ -61,3 +61,10 @@ curl "https://dev154568.service-now.com/api/sn_chg_rest/change/a86d556b97e225101
 --data-raw '{
   "state": "0" }' \
 --user 'admin':'RmV$7y!fP6zW'
+
+curl "https://dev154568.service-now.com/api/now/table/problem" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user 'admin':'RmV$7y!fP6zW' \
+--data-raw '{
+    "short_description": "Jenkins Pipeline: Failed to run veracode analysis on counter-service pipeline",
+    "description": "Stage Veracode Static Code Analysis failed to run, please check build number: 30",
+    "rfc": "7db1aac8973a611017f0f901f053aff7"
+}' | jq -r '.result.sys_id'
