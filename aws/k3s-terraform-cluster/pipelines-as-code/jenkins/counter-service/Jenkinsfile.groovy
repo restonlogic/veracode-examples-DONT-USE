@@ -67,7 +67,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}") {
-            change_sys_id = snow.changeRequest("Deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${buildUrl}", "Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", null, null, null, null, null, null)
+            change_sys_id = snow.changeRequest("DevOps $image build ${buildNumber}: building and deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${buildUrl}", "Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", null, null, null, null, null, null)
           }
         }
       }
@@ -77,7 +77,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}") {
-            problem_sys_id = snow.problem("Jenkins Pipeline Build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id[0]}")
+            problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id[0]}")
           }
         }
       }
