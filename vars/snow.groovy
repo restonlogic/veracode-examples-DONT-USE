@@ -16,9 +16,9 @@ def getSecretString(String secretID) {
     }
 }
 
-username = getSecretString('snow-usr')
-password = getSecretString('snow-pwd')
-url = getSecretString('snow-url')
+String username = getSecretString('snow-usr')
+String password = getSecretString('snow-pwd')
+String url = getSecretString('snow-url')
 
 def changeRequest(String short_description, String description, String work_notes, String category, String type, String priority, String assigned_to, String impact, String urgency) {
 
