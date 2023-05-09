@@ -59,7 +59,9 @@ curl "https://dev154568.service-now.com/api/now/table/change_request/263fa473976
 --header "Accept: application/json" \
 --header "Content-Type: application/json" \
 --data-raw '{
-  "state": "0"} ' \
+  "state": "0",
+  "close_code": "Successful",
+  "close_notes": "Change implemented successfully."}' \
 --user 'admin':'RmV$7y!fP6zW'
 
 curl "https://dev154568.service-now.com/api/sn_chg_rest/change/updateChange" \
@@ -81,3 +83,14 @@ curl "https://dev154568.service-now.com/api/now/table/problem" --request POST --
     "description": "Stage Veracode Static Code Analysis failed to run, please check build number: 30",
     "rfc": "7db1aac8973a611017f0f901f053aff7"
 }' | jq -r '.result.sys_id'
+
+
+curl "https://dev154568.service-now.com/api/now/table/incident" \
+--request POST \
+--header "Accept: application/json" \
+--header "Content-Type: application/json" \
+--data-raw '{
+  "state": "0",
+  "close_code": "Successful",
+  "close_notes": "Change implemented successfully."}' \
+--user 'admin':'RmV$7y!fP6zW'

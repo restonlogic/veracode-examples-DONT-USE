@@ -102,7 +102,7 @@ def updateChange(String status, String change_sys_id) {
     ]
 
     def change = sh (returnStdout: true, script: """
-        curl -s "$url/api/now/table/change_request/$change_sys_id" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
+        curl -s "$url/api/now/table/change_request/$change_sys_id" --request PUT --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
         --data-raw '{
         "state": "${statusState[status]}",
         "close_code": "${statusType[status]}",
