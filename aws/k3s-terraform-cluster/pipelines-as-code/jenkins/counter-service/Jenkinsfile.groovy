@@ -3,6 +3,7 @@ def buildNumber = env.BUILD_NUMBER
 def buildUrl = env.BUILD_URL
 def change_sys_id
 def problem_sys_id
+def incident_sys_id
 pipeline {
     agent { label 'built-in' }
     options {
@@ -77,7 +78,17 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}") {
-            problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id[0]}")
+            problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was. please review change request number ${change_sys_id[0]} work notes for detailed build information", "${change_sys_id[0]}")
+          }
+        }
+      }
+    }
+
+    stage("Create Service Now Incident") {
+        steps {
+          script {
+            dir("${repoFolder}") {
+            incident_sys_id = snow.incident("DevOps $image veracode scan ${buildNumber}: reached threshold for High & Critical vulnerabilities, please remediate findings.", "threshold for High & Critical vulnerabilities, please remediate findings. Please review findings in veracode to remediate https://web.analysiscenter.veracode.com/. Please review change request number ${change_sys_id[0]} work notes for detailed build information", "${change_sys_id[0]}")
           }
         }
       }

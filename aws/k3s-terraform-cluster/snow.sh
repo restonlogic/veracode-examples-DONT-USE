@@ -54,12 +54,25 @@ curl -s "https://dev154568.service-now.com/api/sn_chg_rest/change" \
 --user 'admin':'RmV$7y!fP6zW' | jq -r '.result.sys_id.value'
 
 
-curl "https://dev154568.service-now.com/api/sn_chg_rest/change/a86d556b97e2251017f0f901f053af34" \
+curl "https://dev154568.service-now.com/api/now/table/change_request/263fa4739762211017f0f901f053af72" \
+--request PUT \
+--header "Accept: application/json" \
+--header "Content-Type: application/json" \
+--data-raw '{
+  "state": "0"} ' \
+--user 'admin':'RmV$7y!fP6zW'
+
+curl "https://dev154568.service-now.com/api/sn_chg_rest/change/updateChange" \
 --request PATCH \
 --header "Accept: application/json" \
 --header "Content-Type: application/json" \
 --data-raw '{
-  "state": "0" }' \
+  "values": {
+    "change": {
+        "sys_id": "b26caac4977a611017f0f901f053af54",
+        "state": "1"
+    }
+  } }' \
 --user 'admin':'RmV$7y!fP6zW'
 
 curl "https://dev154568.service-now.com/api/now/table/problem" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user 'admin':'RmV$7y!fP6zW' \
