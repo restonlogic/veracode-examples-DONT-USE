@@ -65,7 +65,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}") {
-              snow.changeRequest("$repoFolder", "Deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${buildUrl}", "Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", null, null, null, null, null, null)
+            change_sys_id = snow.changeRequest("$repoFolder", "Deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${buildUrl}", "Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", null, null, null, null, null, null)
           }
         }
       }
@@ -79,6 +79,16 @@ pipeline {
             zip -r app.zip app
             """
             veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+          }
+        }
+      }
+    }
+
+    stage("Create Service Now Problem") {
+        steps {
+          script {
+            dir("${repoFolder}") {
+            problem_sys_id = snow.problem("Jenkins Pipeline: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id}")
           }
         }
       }
