@@ -16,12 +16,11 @@ def getSecretString(String secretID) {
     }
 }
 
-username = getSecretString('snow-usr')
-password = getSecretString('snow-pwd')
-url = getSecretString('snow-url')
-
 def changeRequest(String short_description, String description, String work_notes, String category, String type, String priority, String assigned_to, String impact, String urgency) {
 
+    def username = getSecretString('snow-usr')
+    def password = getSecretString('snow-pwd')
+    def url = getSecretString('snow-url')
     def types = type ?: 'Standard'
     def categorys = category ?: 'DevOps'
     def prioritys = priority ?: '3'
@@ -29,7 +28,7 @@ def changeRequest(String short_description, String description, String work_note
     def urgencys = urgency ?: '3'
     def assigned_tos = assigned_to ?: 'DevOps System'
     def change = sh (returnStdout: true, script: """
-        curl -s """+ url +"""/api/sn_chg_rest/change" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
+        curl -s "$url/api/sn_chg_rest/change" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
         --data-raw '{
         "short_description": "$short_description",
         "description": "$description",
@@ -45,6 +44,10 @@ def changeRequest(String short_description, String description, String work_note
 }
 
 def problem(String short_description, String description, String change_sys_id) {
+    
+    def username = getSecretString('snow-usr')
+    def password = getSecretString('snow-pwd')
+    def url = getSecretString('snow-url')
     def problem = sh (returnStdout: true, script: """
         curl -s "$url/api/now/table/problem" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
         --data-raw '{
