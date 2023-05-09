@@ -108,6 +108,7 @@ pipeline {
             catch (Exception e) {
               echo "Exception occured: " + e.toString()
               problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was ${e.toString()}. please review change request number ${change_sys_id[0]} work notes for detailed build information", "${change_sys_id[0]}")
+              snow.updateChange("failure", "${change_sys_id[0]}")
             }
           }
         }
