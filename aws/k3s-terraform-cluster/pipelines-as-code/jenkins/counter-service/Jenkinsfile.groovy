@@ -94,7 +94,7 @@ pipeline {
       }
     }
 
-      stage("Veracode Static Code Analysis") {
+    stage("Veracode Static Code Analysis") {
         steps {
           script {
             try {
@@ -103,6 +103,7 @@ pipeline {
             zip -r app.zip appasasad
             """
             veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+              }
             }
             catch (Exception e) {
               echo "Exception occured: " + e.toString()
@@ -111,7 +112,6 @@ pipeline {
           }
         }
       }
-    }
     
       stage("Build Image") {
         steps {
