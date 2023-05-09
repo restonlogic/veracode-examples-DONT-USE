@@ -74,15 +74,15 @@ pipeline {
       }
     }
   
-    stage("Create Service Now Problem") {
-        steps {
-          script {
-            dir("${repoFolder}") {
-            problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was. please review change request number ${change_sys_id[0]} work notes for detailed build information", "${change_sys_id[0]}")
-          }
-        }
-      }
-    }
+    // stage("Create Service Now Problem") {
+    //     steps {
+    //       script {
+    //         dir("${repoFolder}") {
+    //         problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was. please review change request number ${change_sys_id[0]} work notes for detailed build information", "${change_sys_id[0]}")
+    //       }
+    //     }
+    //   }
+    // }
 
     stage("Create Service Now Incident") {
         steps {
@@ -97,29 +97,21 @@ pipeline {
       stage("Veracode Static Code Analysis") {
         steps {
           script {
+            try {
             dir("${projectDir}/microservices/$image") {
             sh """
-            zip -r app.zip app
+            zip -r app.zip appasasad
             """
             veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+            }
+            catch (Exception e) {
+              echo "Exception occured: " + e.toString()
+              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was ${e.toString()}. please review change request number ${change_sys_id[0]} work notes for detailed build information", "${change_sys_id[0]}")
+            }
           }
         }
       }
     }
-  
-    //   stage("Veracode Software Composition Analysis") {
-    //     steps {
-    //       script {
-    //         dir("${projectDir}/microservices/$image") {
-    //             sh """
-    //             cd app
-    //             export SRCCLR_API_TOKEN=${veracode_sca_key}
-    //             curl -sSL https://download.sourceclear.com/ci.sh | sh
-    //             """
-    //       }
-    //     }
-    //   }
-    // }
     
       stage("Build Image") {
         steps {

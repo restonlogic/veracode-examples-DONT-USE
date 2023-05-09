@@ -90,7 +90,11 @@ curl "https://dev154568.service-now.com/api/now/table/incident" \
 --header "Accept: application/json" \
 --header "Content-Type: application/json" \
 --data-raw '{
-  "state": "0",
-  "close_code": "Successful",
-  "close_notes": "Change implemented successfully."}' \
+    "short_description": "DevOps counter-service veracode scan 37: reached threshold for High & Critical vulnerabilities, please remediate findings.",
+    "description": "threshold for High & Critical vulnerabilities, please remediate findings. Please review findings in veracode to remediate https://web.analysiscenter.veracode.com/",
+    "work_notes": "counter-service contains 10 high findings, 20 medium findings and 50 low findings",
+    "impact": "3",
+    "urgency": "3",
+    "caller_id": "DevOps System",
+    "rfc": "85e66f80977e611017f0f901f053af7a"}' \
 --user 'admin':'RmV$7y!fP6zW'
