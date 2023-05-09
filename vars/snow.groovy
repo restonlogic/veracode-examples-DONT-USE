@@ -6,6 +6,8 @@ import jenkins.*
 import jenkins.model.* 
 import hudson.*
 import hudson.model.*
+import java.lang.String
+import groovy.transform.Field
 
 def getSecretString(String secretID) {
     def jenkinsCredentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials( com.cloudbees.plugins.credentials.common.StandardCredentials.class, Jenkins.instance, null, null );
@@ -16,9 +18,9 @@ def getSecretString(String secretID) {
     }
 }
 
-String username = getSecretString('snow-usr')
-String password = getSecretString('snow-pwd')
-String url = getSecretString('snow-url')
+@Field username = getSecretString('snow-usr')
+@Field password = getSecretString('snow-pwd')
+@Field url = getSecretString('snow-url')
 
 def changeRequest(String short_description, String description, String work_notes, String category, String type, String priority, String assigned_to, String impact, String urgency) {
 
