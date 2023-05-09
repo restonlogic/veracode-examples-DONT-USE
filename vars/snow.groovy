@@ -53,10 +53,7 @@ def problem(String short_description, String description, String change_sys_id) 
         --data-raw '{
         "short_description": "$short_description",
         "description": "$description",
-        "rfc": {
-            "link": "$url/api/now/table/change_request/$change_sys_id",
-            "value" "$change_sys_id"
-        }}' | jq -r '.result.sys_id'
+        "rfc": "$change_sys_id" }' | jq -r '.result.sys_id'
     """).split()
     return problem
 }
@@ -71,10 +68,7 @@ def incident(String short_description, String description, String change_sys_id,
         --data-raw '{
         "short_description": "$short_description",
         "description": "$description",
-        "rfc": {
-            "link": "$url/api/now/table/change_request/$change_sys_id",
-            "value" "$change_sys_id"
-        }}' | jq -r '.result.sys_id'
+        "rfc": "$change_sys_id" }' | jq -r '.result.sys_id'
     """).split()
     return problem
 }

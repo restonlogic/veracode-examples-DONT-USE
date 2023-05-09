@@ -77,7 +77,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}") {
-            problem_sys_id = snow.problem("Jenkins Pipeline: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id[0]}")
+            problem_sys_id = snow.problem("Jenkins Pipeline Build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, please check build number: ${buildNumber}", "${change_sys_id[0]}")
           }
         }
       }
