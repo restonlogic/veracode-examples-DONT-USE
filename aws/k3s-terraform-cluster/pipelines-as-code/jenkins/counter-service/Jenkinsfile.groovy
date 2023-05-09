@@ -98,11 +98,11 @@ pipeline {
         steps {
           script {
             try {
-            dir("${projectDir}/microservices/$image") {
-            sh """
-            zip -r app.zip appasasad
-            """
-            veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+              dir("${projectDir}/microservices/$image") {
+              sh """
+              zip -r app.zip app
+              """
+              veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteincompletescan: 2, scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
               }
             }
             catch (Exception e) {
