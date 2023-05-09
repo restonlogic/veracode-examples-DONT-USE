@@ -44,7 +44,7 @@ def changeRequest(String short_description, String description, String work_note
 }
 
 def problem(String short_description, String description, String change_sys_id) {
-    
+
     def username = getSecretString('snow-usr')
     def password = getSecretString('snow-pwd')
     def url = getSecretString('snow-url')
@@ -54,9 +54,9 @@ def problem(String short_description, String description, String change_sys_id) 
         "short_description": "$short_description",
         "description": "$description",
         "rfc": {
-            "link": "$url/api/now/table/change_request/$change_sys_id"
+            "link": "$url/api/now/table/change_request/$change_sys_id",
             "value" "$change_sys_id"
-        } | jq -r '.result.sys_id'
+        }}' | jq -r '.result.sys_id'
     """).split()
     return problem
 }
