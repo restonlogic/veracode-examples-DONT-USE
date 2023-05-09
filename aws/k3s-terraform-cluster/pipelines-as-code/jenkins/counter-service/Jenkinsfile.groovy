@@ -1,6 +1,8 @@
 @Library(['jenkins-library@main']) _
 def buildNumber = env.BUILD_NUMBER
 def buildUrl = env.BUILD_URL
+def change_sys_id
+def problem_sys_id
 pipeline {
     agent { label 'built-in' }
     options {
