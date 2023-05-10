@@ -68,7 +68,7 @@ pipeline {
         steps {
           script {
             dir("${repoFolder}") {
-            change_sys_id = snow.changeRequest("DevOps $image build ${buildNumber}: building and deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${buildUrl}", "Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", null, null, null, null, null, null)
+            change_sys_id = snow.changeRequest("DevOps $image build ${buildNumber}: building and deploying $image to $env kubernetes cluster in region $region", "$image is currently being built and deployed by jenkins to $env kubernetes cluster in region $region, Link to build: ${buildUrl}", "DevOps build ${buildNumber} has started, Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", null, null, null, null, null, null)
           }
         }
       }
@@ -99,11 +99,11 @@ pipeline {
           script {
             try {
               dir("${projectDir}/microservices/$image") {
+              snow.workNote("Zipping $image application and uploading to veracode for running software composition and static code analysis.", "${change_sys_id[0]}")
               sh """
               zip -r app.zip app
               """
               veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
-              snow.workNote("Running veracode software composition analysis and static code analysis on $image.", "${change_sys_id[0]}")
               }
             }
             catch (Exception e) {
