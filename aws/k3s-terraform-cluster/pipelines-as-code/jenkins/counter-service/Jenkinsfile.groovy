@@ -119,11 +119,20 @@ pipeline {
       stage("Build Image") {
         steps {
           script {
+            try {
             dir("${projectDir}/microservices/$image") {
+                snow.workNote("Building docker image with tags: $ecr_repo_url:$buildNumber, $ecr_repo_url:$build_tag, $ecr_repo_url:$branch", "${change_sys_id[0]}")
                 sh """
                 docker build -t $ecr_repo_url:$buildNumber -t $ecr_repo_url:$build_tag -t $ecr_repo_url:$branch .
                 """
-          }
+              }
+            }
+            catch (Exception e) {
+              echo "Exception occured: " + e.toString()
+              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to build image on $image pipeline", "Stage Build Image failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
+              snow.updateChange("failure", "${change_sys_id[0]}")
+              error(e.toString())
+            }
         }
       }
     }
@@ -131,12 +140,21 @@ pipeline {
       stage("Push Image to ECR") {
         steps {
           script {
+            try {
             dir("${projectDir}/microservices/$image") {
+                snow.workNote("Pushing $image build image to ecr $ecr_repo_url", "${change_sys_id[0]}")
                 sh """
                 docker login --password $ecr_password --username AWS $ecr_repo_url
                 docker image push --all-tags $ecr_repo_url
                 """
-          }
+              }
+            }
+            catch (Exception e) {
+              echo "Exception occured: " + e.toString()
+              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to push build image to ecr on $image pipeline", "Stage Push Image to ECR failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
+              snow.updateChange("failure", "${change_sys_id[0]}")
+              error(e.toString())
+            }
         }
       }
     }
