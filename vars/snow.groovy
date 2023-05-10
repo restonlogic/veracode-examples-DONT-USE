@@ -110,3 +110,16 @@ def updateChange(String status, String change_sys_id) {
     """).split()
     return change
 }
+
+def workNote(String note, String change_sys_id) {
+
+    def username = getSecretString('snow-usr')
+    def password = getSecretString('snow-pwd')
+    def url = getSecretString('snow-url')
+
+    sh (returnStdout: true, script: """
+        curl -s "$url/api/now/table/change_request/$change_sys_id" --request PUT --header "Accept: application/json" --header "Content-Type: application/json" --user '$username':'$password' \\
+        --data-raw '{
+        "work_notes": "$note"
+    """).split()
+}

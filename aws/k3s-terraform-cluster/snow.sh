@@ -64,17 +64,13 @@ curl "https://dev154568.service-now.com/api/now/table/change_request/263fa473976
   "close_notes": "Change implemented successfully."}' \
 --user 'admin':'RmV$7y!fP6zW'
 
-curl "https://dev154568.service-now.com/api/sn_chg_rest/change/updateChange" \
---request PATCH \
+curl "https://dev154568.service-now.com/api/now/table/change_request/82a9bfc497be611017f0f901f053af03" \
+--request PUT \
 --header "Accept: application/json" \
 --header "Content-Type: application/json" \
 --data-raw '{
-  "values": {
-    "change": {
-        "sys_id": "b26caac4977a611017f0f901f053af54",
-        "state": "1"
-    }
-  } }' \
+    "work_notes": "yoioio"
+    }' \
 --user 'admin':'RmV$7y!fP6zW'
 
 curl "https://dev154568.service-now.com/api/now/table/problem" --request POST --header "Accept: application/json" --header "Content-Type: application/json" --user 'admin':'RmV$7y!fP6zW' \
