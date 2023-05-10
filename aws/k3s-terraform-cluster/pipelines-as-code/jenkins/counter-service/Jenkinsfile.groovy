@@ -103,7 +103,7 @@ pipeline {
               sh """
               zip -r app.zip app
               """
-              veracode applicationName: "${image}", timeout: 5, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+              veracode applicationName: "${image}", timeout: 8, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
               }
             }
             catch (Exception e) {
