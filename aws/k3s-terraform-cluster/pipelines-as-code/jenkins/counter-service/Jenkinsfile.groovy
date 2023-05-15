@@ -249,8 +249,8 @@ pipeline {
             sh """
             docker rmi -f \$(docker images -q $ecr_repo_url:*)
             """
-          }
         }
+      }
     }
   }
 }
