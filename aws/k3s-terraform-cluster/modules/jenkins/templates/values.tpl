@@ -1,9 +1,9 @@
 controller:
-  runAsUser: 1000
-  fsGroup: 1000
+  runAsUser: 0
+  fsGroup: 0
   containerSecurityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
+    runAsUser: 0
+    runAsGroup: 0
     readOnlyRootFilesystem: false
     allowPrivilegeEscalation: false
   numExecutors: 6
