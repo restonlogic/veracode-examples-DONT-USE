@@ -103,6 +103,36 @@ pipeline {
           }
         }
       }
+
+    stage("Evaluate Veracode Findings") {
+        steps {
+          script {
+            try {
+              dir("${projectDir}/python") {
+              snow.workNote("Evaluating veracode findings for $image application.", "${change_sys_id[0]}")
+              sh """
+              python3 -m venv ./venv
+              pip3 install -r requirements.txt
+              mkdir -p ~/.veracode
+              tee ~/.veracode/credentials <<- _EOF_
+              [default]
+              veracode_api_key_id = $veracode_api_id
+              veracode_api_key_secret = $veracode_api_key
+              _EOF_
+
+              python3 ./veracode.py
+              """
+              }
+            }
+            catch (Exception e) {
+              echo "Exception occured: " + e.toString()
+              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to evaluate veracode findings on $image pipeline", "Stage Evaluate Veracode Findings failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
+              snow.updateChange("failure", "${change_sys_id[0]}")
+              error(e.toString())
+            }
+          }
+        }
+      }
     
       stage("Build Image") {
         steps {
