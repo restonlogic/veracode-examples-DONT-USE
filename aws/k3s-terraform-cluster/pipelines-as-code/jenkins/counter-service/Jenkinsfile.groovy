@@ -114,12 +114,13 @@ pipeline {
               python3 -m venv ./venv
               pip3 install -r requirements.txt
               mkdir -p ~/.veracode
-              cat ~/.veracode/credentials << EOF
+              cat ~/.veracode/credentials <<-EOF
               [default]
               veracode_api_key_id = $veracode_api_id
               veracode_api_key_secret = $veracode_api_key
               EOF
-
+              """
+              sh """
               python3 ./veracode.py
               """
               }
