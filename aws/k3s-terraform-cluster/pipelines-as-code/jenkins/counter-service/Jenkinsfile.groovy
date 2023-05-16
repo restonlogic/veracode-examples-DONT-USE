@@ -82,28 +82,6 @@ pipeline {
       }
     }
 
-    stage("Veracode Static Code Analysis") {
-        steps {
-          script {
-            try {
-              dir("${projectDir}/microservices/$image") {
-              snow.workNote("Zipping $image application and uploading to veracode for running software composition and static code analysis.", "${change_sys_id[0]}")
-              sh """
-              zip -r app.zip app
-              """
-              veracode applicationName: "${image}", timeout: 8, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
-              }
-            }
-            catch (Exception e) {
-              echo "Exception occured: " + e.toString()
-              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-              snow.updateChange("failure", "${change_sys_id[0]}")
-              error(e.toString())
-            }
-          }
-        }
-      }
-
     stage("Evaluate Veracode Findings") {
         steps {
           script {
@@ -128,6 +106,28 @@ pipeline {
             catch (Exception e) {
               echo "Exception occured: " + e.toString()
               problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to evaluate veracode findings on $image pipeline", "Stage Evaluate Veracode Findings failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
+              snow.updateChange("failure", "${change_sys_id[0]}")
+              error(e.toString())
+            }
+          }
+        }
+      }
+
+    stage("Veracode Static Code Analysis") {
+        steps {
+          script {
+            try {
+              dir("${projectDir}/microservices/$image") {
+              snow.workNote("Zipping $image application and uploading to veracode for running software composition and static code analysis.", "${change_sys_id[0]}")
+              sh """
+              zip -r app.zip app
+              """
+              veracode applicationName: "${image}", timeout: 8, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "counter-service-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+              }
+            }
+            catch (Exception e) {
+              echo "Exception occured: " + e.toString()
+              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to run veracode analysis on $image pipeline", "Stage Veracode Static Code Analysis failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
               snow.updateChange("failure", "${change_sys_id[0]}")
               error(e.toString())
             }
