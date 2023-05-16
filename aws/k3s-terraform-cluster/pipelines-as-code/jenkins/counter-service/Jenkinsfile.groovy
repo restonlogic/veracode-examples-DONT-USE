@@ -98,7 +98,8 @@ pipeline {
               echo "veracode_api_key_secret = $veracode_api_key" >> ~/.veracode/credentials
               """
               sh """
-              python3 ./veracode.py
+              compliance_status=\$(python3 ./veracode.py | jq -r '.COMPLIANCE_STATUS'
+              echo \$compliance_status
               """
               }
             }
