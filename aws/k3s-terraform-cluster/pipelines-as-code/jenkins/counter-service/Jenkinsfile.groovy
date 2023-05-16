@@ -97,10 +97,8 @@ pipeline {
               echo "veracode_api_key_id = $veracode_api_id" >> ~/.veracode/credentials
               echo "veracode_api_key_secret = $veracode_api_key" >> ~/.veracode/credentials
               """
-              sh """
-              compliance_status=\$(python3 ./veracode.py | jq -r '.COMPLIANCE_STATUS'
-              echo \$compliance_status
-              """
+              results = sh(script: "python3 ./veracode.py", returnStdout: true).trim()
+              compliance_status = readJSON(text: results).COMPLIANCE_STATUS
               }
             }
             catch (Exception e) {
