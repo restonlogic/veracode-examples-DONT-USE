@@ -101,7 +101,7 @@ pipeline {
               compliance_status = readJSON(text: results).COMPLIANCE_STATUS
               analysis_score = readJSON(text: results).ANALYSIS_SCORE
               analysis_rating = readJSON(text: results).ANALYSIS_RATING
-              snow.workNote("Veracode results for $image: Compliance Status: $compliance_status, analysis_score: $analysis_score, analysis_rating: $analysis_rating", "${change_sys_id[0]}")
+              snow.workNote("Veracode results for $image: Compliance Status: $compliance_status, Analysis Score: $analysis_score, Analysis Rating: $analysis_rating", "${change_sys_id[0]}")
               }
             }
             catch (Exception e) {
