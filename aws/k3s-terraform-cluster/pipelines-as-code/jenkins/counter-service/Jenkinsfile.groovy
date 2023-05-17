@@ -72,16 +72,6 @@ pipeline {
       }
     }
 
-    stage("Create Service Now Incident") {
-        steps {
-          script {
-            dir("${repoFolder}") {
-            incident_sys_id = snow.incident("DevOps $image veracode scan ${buildNumber}: reached threshold for High & Critical vulnerabilities, please remediate findings.", "threshold for High & Critical vulnerabilities, please remediate findings. Please review findings in veracode to remediate https://web.analysiscenter.veracode.com/", "$image contains 10 high findings, 20 medium findings and 50 low findings", "${change_sys_id[0]}", null, null, null)
-          }
-        }
-      }
-    }
-
     stage("Veracode Static Code Analysis") {
         steps {
           script {
