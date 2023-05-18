@@ -36,7 +36,7 @@ pipeline {
               sh """
                 echo "Setting env variables"
                 """
-                image      = "counter-service"
+                image      = "java-verademo"
                 env        = sh(script: "jq '.global_config.environment' -r manifest.json", returnStdout: true).trim()
                 name       = sh(script: "jq '.global_config.name' -r manifest.json", returnStdout: true).trim()
                 region     = sh(script: "jq '.global_config.region' -r manifest.json", returnStdout: true).trim()
@@ -77,11 +77,11 @@ pipeline {
           script {
             try {
               dir("${projectDir}/microservices/$image") {
-              snow.workNote("Zipping $image application and uploading to veracode for running software composition and static code analysis.", "${change_sys_id[0]}")
+              snow.workNote("Building $image application and uploading to veracode for running software composition and static code analysis.", "${change_sys_id[0]}")
               sh """
-              zip -r app.zip app
+              mvn -f ./app/pom.xml clean package 
               """
-              veracode applicationName: "${image}", timeout: 8, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "${image}-build-${buildNumber}", uploadIncludesPattern: 'app.zip', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
+              veracode applicationName: "${image}", timeout: 8, createProfile: true, criticality: "Medium", debug: true, waitForScan: true, deleteIncompleteScanLevel: "2", scanName: "${image}-build-${buildNumber}", uploadIncludesPattern: 'app/target/verademo.war', vid: "${veracode_api_id}", vkey: "${veracode_api_key}"
               }
             }
             catch (Exception e) {
@@ -138,144 +138,6 @@ pipeline {
         }
       }
     
-      stage("Build Image") {
-        steps {
-          script {
-            try {
-            dir("${projectDir}/microservices/$image") {
-                snow.workNote("Building docker image with tags: $ecr_repo_url:$buildNumber, $ecr_repo_url:$build_tag, $ecr_repo_url:$branch", "${change_sys_id[0]}")
-                sh """
-                docker build -t $ecr_repo_url:$buildNumber -t $ecr_repo_url:$build_tag -t $ecr_repo_url:$branch .
-                """
-              }
-            }
-            catch (Exception e) {
-              echo "Exception occured: " + e.toString()
-              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to build image on $image pipeline", "Stage Build Image failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-              snow.updateChange("failure", "${change_sys_id[0]}")
-              error(e.toString())
-            }
-        }
-      }
-    }
-    
-      stage("Push Image to ECR") {
-        steps {
-          script {
-            try {
-            dir("${projectDir}/microservices/$image") {
-                snow.workNote("Pushing $image build image to ecr $ecr_repo_url", "${change_sys_id[0]}")
-                sh """
-                docker login --password $ecr_password --username AWS $ecr_repo_url
-                docker image push --all-tags $ecr_repo_url
-                """
-              }
-            }
-            catch (Exception e) {
-              echo "Exception occured: " + e.toString()
-              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to push build image to ecr on $image pipeline", "Stage Push Image to ECR failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-              snow.updateChange("failure", "${change_sys_id[0]}")
-              error(e.toString())
-            }
-        }
-      }
-    }
-
-      stage("Prepare Kubernetes Namespace") {
-        steps {
-          script {
-            try {
-            dir("${projectDir}") {
-              snow.workNote("Preparing kubernetes namespace and creating secrets for $image on $env cluster in region $region", "${change_sys_id[0]}")
-              sh """
-              kubectl create namespace $image --dry-run=client -o yaml | kubectl apply -f -
-              kubectl create secret -n $image docker-registry regcred --docker-server=$ecr_repo_url --docker-username=AWS --docker-password=$ecr_password --docker-email=$acme_email --dry-run=client -o yaml | kubectl apply -f -
-              """
-              }
-            }
-            catch (Exception e) {
-              echo "Exception occured: " + e.toString()
-              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to prepare kubernetes namespace on $image pipeline", "Stage Prepare Kubernetes Namespace failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-              snow.updateChange("failure", "${change_sys_id[0]}")
-              error(e.toString())
-            }
-        }
-      }
-    }
-
-      stage("Generate Kubernetes manifests") {
-        steps {
-          script {
-            try {
-            dir("${projectDir}") {
-              snow.workNote("Generating kubernetes manifests for $image on $env cluster in region $region", "${change_sys_id[0]}")
-              sh """
-              make -f pipelines-as-code/jenkins/Makefile generate-manifests \
-                      serviceName=$image \
-                      environment=$env \
-                      portNumber=8080 \
-                      imageName=$ecr_repo_url \
-                      imageTag=$build_tag \
-                      nameSpace=$image \
-                      pathPrefix="/$image" \
-                      repoFolder=${projectDir}
-              """
-              }
-            }
-            catch (Exception e) {
-              echo "Exception occured: " + e.toString()
-              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to genearate kubernetes manifests on $image pipeline", "Stage Generate Kubernetes Manifests failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-              snow.updateChange("failure", "${change_sys_id[0]}")
-              error(e.toString())
-            }
-        }
-      }
-    }
-  
-      stage("Deploy Manifests") {
-        steps {
-          script {
-            try {
-            dir("${projectDir}") {
-              snow.workNote("Deploying kubernetes manifests for $image on $env cluster in region $region", "${change_sys_id[0]}")
-              sh """
-              kubectl apply -f ${image}.yaml
-              kubectl apply -f ingress.yaml
-              """
-              }
-            }
-            catch (Exception e) {
-              echo "Exception occured: " + e.toString()
-              problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed to deploy kubernetes manifests on $image pipeline", "Stage Deploy Kubernetes Manifests failed to run, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-              snow.updateChange("failure", "${change_sys_id[0]}")
-              error(e.toString())
-            }
-        }
-      }
-    }
-
-    stage("Healthcheck") {
-      steps {
-        script {
-          try {
-          dir("${projectDir}") {
-            snow.workNote("Performing healthcheck against $image endpoint http://${ext_lb_dns}/${image}/ on $env cluster in region $region", "${change_sys_id[0]}")
-            sh """
-              bash -c 'while [[ "\$(curl -s -o /dev/null -w ''%{http_code}'' http://${ext_lb_dns}/${image}/)" != "200" ]]; do echo "waiting for $image healtheck to pass, sleeping.";\\sleep 5; done; echo "$image url: http://${ext_lb_dns}/${image}/"'
-            """
-            snow.updateChange("success", "${change_sys_id[0]}")
-            }
-          }
-          catch (Exception e) {
-            echo "Exception occured: " + e.toString()
-            problem_sys_id = snow.problem("DevOps $image build ${buildNumber}: Failed healthcheck for $image application, endpoint url is http://${ext_lb_dns}/${image}/", "Stage Healthcheck failed, the error was ${e.toString()}. Link to build: ${buildUrl}, Commit Hash: ${build_tag}, Application: ${image}, Environment: ${env}, Region: ${region}", "${change_sys_id[0]}")
-            snow.updateChange("failure", "${change_sys_id[0]}")
-            error(e.toString())
-          }
-        }
-      }
-    }
-
     stage("Clean Workspace") {
         steps {
           script {
