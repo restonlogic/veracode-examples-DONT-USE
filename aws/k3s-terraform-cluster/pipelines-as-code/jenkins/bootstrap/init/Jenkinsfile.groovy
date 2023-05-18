@@ -42,20 +42,40 @@ pipeline {
             }
         }
 
-        stage("Trigger Counter Service Pipeline") {
-             when {
-                 beforeAgent true
-                 anyOf {
-                     changeset "**/aws/k3s-terraform-cluster/microservices/counter-service/**"
-                     changeset "**/aws/k3s-terraform-cluster/pipelines-as-code/jenkins/counter-service/**"
-                     expression{env.BUILD_NUMBER == '1'}
-                 }
-             }
-             steps {
-               script {
-                   build(job: 'microservice-pipelines/counter-service', propagate: true, wait: true)
-               }
-             }
+        stage("Run Pipeline Jobs") {
+            parallel {
+                stage("Trigger Counter Service Pipeline") {
+                    when {
+                        beforeAgent true
+                        anyOf {
+                            changeset "**/aws/k3s-terraform-cluster/microservices/counter-service/**"
+                            changeset "**/aws/k3s-terraform-cluster/pipelines-as-code/jenkins/counter-service/**"
+                            expression{env.BUILD_NUMBER == '1'}
+                        }
+                    }
+                    steps {
+                    script {
+                            build(job: 'microservice-pipelines/counter-service', propagate: true, wait: true)
+                        }
+                        }
+                    }
+
+                stage("Trigger Java Verademo Pipeline") {
+                    when {
+                        beforeAgent true
+                        anyOf {
+                            changeset "**/aws/k3s-terraform-cluster/microservices/java-verademo/**"
+                            changeset "**/aws/k3s-terraform-cluster/pipelines-as-code/jenkins/java-verademo/**"
+                            expression{env.BUILD_NUMBER == '1'}
+                        }
+                    }
+                    steps {
+                    script {
+                            build(job: 'microservice-pipelines/java-verademo', propagate: true, wait: true)
+                        }
+                        }
+                    }
+            }
         }
     }
 }
