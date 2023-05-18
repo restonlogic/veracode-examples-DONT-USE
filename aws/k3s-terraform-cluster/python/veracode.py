@@ -1,7 +1,10 @@
 import json
+import sys
 from veracode_api_py import Applications, SummaryReport
 
-application_id = Applications().get_by_name(appname="counter-service")
+appname = sys.argv[1]
+
+application_id = Applications().get_by_name(appname=appname)
 application_guid = application_id[0]['guid']
 
 summary = SummaryReport().get_summary_report(app=application_guid)

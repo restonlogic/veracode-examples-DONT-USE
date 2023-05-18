@@ -109,7 +109,7 @@ pipeline {
               echo "veracode_api_key_id = $veracode_api_id" >> ~/.veracode/credentials
               echo "veracode_api_key_secret = $veracode_api_key" >> ~/.veracode/credentials
               """
-              results = sh(script: "python3 ./veracode.py", returnStdout: true).trim()
+              results = sh(script: "python3 ./veracode.py $image", returnStdout: true).trim()
               compliance_status = readJSON(text: results).COMPLIANCE_STATUS
               analysis_score = readJSON(text: results).ANALYSIS_SCORE
               analysis_rating = readJSON(text: results).ANALYSIS_RATING
