@@ -48,6 +48,7 @@ controller:
     - git:latest
     - configuration-as-code:latest
     - workflow-aggregator:2.6
+    - blueocean:1.27.4
   additionalPlugins:
     - ansicolor:latest
     - authorize-project:latest
