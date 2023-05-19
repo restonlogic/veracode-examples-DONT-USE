@@ -24,7 +24,7 @@ printf "${BLUE}*****************************************************************
 printf "${BBLUE}The service endpoints are listed below:${NC}\n"
 echo " "
 printf "${BLUE} Jenkins endpoint: ${NC}\n"
-printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/jenkins\n"
+printf "  ${BBLUE} URL${NC}: http://$ext_lb_dns/jenkins/blue\n"
 printf "  ${BBLUE} Credentials${NC}: admin / $jenkins_pass\n"
 echo " "
 printf "${BLUE} Veracode Dashboard: ${NC}\n"
