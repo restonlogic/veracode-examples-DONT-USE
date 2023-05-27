@@ -105,13 +105,13 @@ variable "extlb_https_port" {
 
 variable "k3s_server_desired_capacity" {
   type        = number
-  default     = 3
+  default     = 1
   description = "K3s server ASG desired capacity"
 }
 
 variable "k3s_server_min_capacity" {
   type        = number
-  default     = 3
+  default     = 1
   description = "K3s server ASG min capacity"
 }
 
@@ -123,13 +123,13 @@ variable "k3s_server_max_capacity" {
 
 variable "k3s_worker_desired_capacity" {
   type        = number
-  default     = 3
+  default     = 1
   description = "K3s server ASG desired capacity"
 }
 
 variable "k3s_worker_min_capacity" {
   type        = number
-  default     = 3
+  default     = 1
   description = "K3s server ASG min capacity"
 }
 
