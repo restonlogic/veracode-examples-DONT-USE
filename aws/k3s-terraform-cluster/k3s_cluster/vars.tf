@@ -123,13 +123,13 @@ variable "k3s_server_max_capacity" {
 
 variable "k3s_worker_desired_capacity" {
   type        = number
-  default     = 1
+  default     = 2
   description = "K3s server ASG desired capacity"
 }
 
 variable "k3s_worker_min_capacity" {
   type        = number
-  default     = 1
+  default     = 2
   description = "K3s server ASG min capacity"
 }
 
