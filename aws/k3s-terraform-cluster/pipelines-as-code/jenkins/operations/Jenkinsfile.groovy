@@ -5,9 +5,6 @@ def change_sys_id
 def incident_sys_id
 pipeline {
     agent { label 'built-in' }
-    triggers {
-        cron('H/15 * * * *')
-    }
     options {
         ansiColor('xterm')
         disableConcurrentBuilds()

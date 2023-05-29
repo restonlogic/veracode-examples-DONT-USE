@@ -1,5 +1,8 @@
 pipelineJob("operation-pipelines/kubernetes-maintenance") {
     description("pipeline to conduct maintenance on kubernetes cluster.")
+    triggers {
+        cron('H/15 * * * *')
+    }
     definition {
         cps {
             sandbox()
