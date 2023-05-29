@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 sys_id=$(curl "https://dev154568.service-now.com/api/now/table/sys_user?sysparm_limit=1&user_name=devops.system" \
 --request GET \
