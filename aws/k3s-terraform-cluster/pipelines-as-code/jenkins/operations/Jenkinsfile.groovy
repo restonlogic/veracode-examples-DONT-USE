@@ -64,7 +64,7 @@ pipeline {
         steps {
           script {
             try {
-              dir("${projectDir}/pipeline-as-code/jenkins/scripts") {
+              dir("${projectDir}/scripts") {
               snow.workNote("Cleaning up kubernetes node objects", "${change_sys_id[0]}")
               sh """
               bash ./cleanup_node_objects.sh
