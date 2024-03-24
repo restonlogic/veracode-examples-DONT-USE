@@ -13,6 +13,7 @@
 * [Amazon AWS Account](https://aws.amazon.com/it/console/) - Create an AWS account with billing enabled
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) - AWS CLI to configure credentials
 * [Docker](https://docs.docker.com/get-docker/) - To run script
+* [ServiceNow](https://developer.servicenow.com/dev.do) - ServiceNow Personal Developer Instance (PDI)
 
 ### Veracode
 
