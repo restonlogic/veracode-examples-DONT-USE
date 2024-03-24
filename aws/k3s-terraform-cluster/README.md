@@ -61,6 +61,10 @@ docker run -v ~/.aws/credentials:/root/.aws/credentials \
     -e VERACODE_API_ID="" \
     -e VERACODE_API_KEY="" \
     -e AWS_PROFILE="" \
+    -e SNOW_URL="" \
+    -e SNOW_USR="" \
+    -e SNOW_PWD="" \
+    -e AWS_PROFILE="" \
     engrave/k3s-terraform-cluster:0.6
 ```
 Below you will find the commands and their options
@@ -81,7 +85,9 @@ Below you will find the commands and their options
 | VERACODE_API_ID     |veracode api id                            |
 | VERACODE_API_KEY    |veracode api key                           |
 | AWS_PROFILE         |aws profile name                           |
-
+| SNOW_URL            |ServiceNow Instance URL                    |
+| SNOW_USR            |ServiceNow Username                        |
+| SNOW_PWD            |ServiceNow Password                        |
 
 ## Endpoints
 Once the infrastructure is created, you will find the following endpoints
@@ -107,6 +113,10 @@ docker run -v ~/.aws/credentials:/root/.aws/credentials \
     -e CEA="" \
     -e VERACODE_API_ID="" \
     -e VERACODE_API_KEY="" \
+    -e AWS_PROFILE="" \
+    -e SNOW_URL="" \
+    -e SNOW_USR="" \
+    -e SNOW_PWD="" \
     -e AWS_PROFILE="" \
     engrave/k3s-terraform-cluster:0.4
 ```
