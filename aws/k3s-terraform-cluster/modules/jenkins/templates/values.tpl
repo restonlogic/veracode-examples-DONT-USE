@@ -10,7 +10,6 @@ controller:
   executorMode: "NORMAL"
   image: "engrave/jenkins-veracode-example"
   tag: "latest"
-  testEnabled: false
   adminSecret: true
   adminPassword: "${jenkins_admin_password}"
   serviceType: NodePort
