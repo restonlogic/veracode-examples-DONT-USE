@@ -240,6 +240,7 @@ if [ $action = "apply" ]; then
             ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
             k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
             yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
+            chmod og-rw /tmp/k3s_kubeconfig
             export KUBECONFIG=$k3s_kubeconfig
             i=1
         fi
