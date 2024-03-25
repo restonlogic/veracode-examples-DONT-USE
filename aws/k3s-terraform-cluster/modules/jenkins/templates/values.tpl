@@ -14,6 +14,7 @@ controller:
   adminPassword: "${jenkins_admin_password}"
   serviceType: NodePort
   servicePort: 80
+  testEnabled: false
   targetPort: 80
   agentListenerServiceType: NodePort
   serviceExternalTrafficPolicy: Local
