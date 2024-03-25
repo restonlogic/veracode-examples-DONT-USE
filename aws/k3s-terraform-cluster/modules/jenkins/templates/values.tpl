@@ -249,7 +249,7 @@ controller:
   sidecars:
     configAutoReload:
       enabled: true
-      image: kiwigrid/k8s-sidecar:1.21.0
+      image: "kiwigrid/k8s-sidecar:1.21.0"
       imagePullPolicy: IfNotPresent
       resources: {}
       reqRetryConnect: 10
