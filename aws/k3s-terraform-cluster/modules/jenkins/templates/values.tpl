@@ -251,8 +251,10 @@ controller:
   sidecars:
     configAutoReload:
       enabled: true
-      image: "kiwigrid/k8s-sidecar"
-      tag: 1.26.1
+      image:
+        registry: "docker.io"
+        repository: "kiwigrid/k8s-sidecar"
+        tag: 1.26.1
       imagePullPolicy: IfNotPresent
       resources: {}
       reqRetryConnect: 10
