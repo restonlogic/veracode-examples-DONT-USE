@@ -83,7 +83,7 @@ controller:
     - durable-task:503.v57154d18d478
     - veracode-scan:22.6.18.0
     - servicenow-devops:1.38.0
-installLatestPlugins: false
+  installLatestPlugins: false
 
   JCasC:
     defaultConfig: true
