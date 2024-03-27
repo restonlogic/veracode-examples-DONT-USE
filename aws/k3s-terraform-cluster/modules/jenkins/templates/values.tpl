@@ -8,10 +8,16 @@ controller:
     allowPrivilegeEscalation: false
   numExecutors: 6
   executorMode: "NORMAL"
-  image: "engrave/jenkins-veracode-example"
-  tag: "latest"
-  adminSecret: true
-  adminPassword: "${jenkins_admin_password}"
+  image: 
+    registry: "docker.io"
+    repository: "engrave/jenkins-veracode-example"
+    tag: "latest"
+    tagLabel: "latest"
+    pullPolicy: "Always"
+  admin:
+    username: "admin"
+    password: "${jenkins_admin_password}"
+    createSecret: true
   serviceType: NodePort
   servicePort: 80
   testEnabled: false
@@ -83,6 +89,7 @@ controller:
     - durable-task:503.v57154d18d478
     - veracode-scan:22.6.18.0
     - servicenow-devops:1.38.0
+  installLatestPlugins: false
 
   JCasC:
     defaultConfig: true
@@ -250,18 +257,23 @@ controller:
   sidecars:
     configAutoReload:
       enabled: true
-      image: "kiwigrid/k8s-sidecar:1.21.0"
-      imagePullPolicy: IfNotPresent
+      image:
+        registry: docker.io
+        repository: "kiwigrid/k8s-sidecar"
+        tag: 1.26.1
       resources: {}
       reqRetryConnect: 10
       sshTcpPort: 1044
       folder: "/var/jenkins_home/casc_configs"
       containerSecurityContext:
-        readOnlyRootFilesystem: true
+        readOnlyRootFilesystem: false
         allowPrivilegeEscalation: true
-    other:
+    additionalSidecarContainers:
       - name: dind
-        image: docker:dind
+        image: 
+          registry: docker.io
+          repository: docker:dind
+          tag: latest
         securityContext:
           privileged: true
         resources:
