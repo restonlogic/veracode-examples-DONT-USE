@@ -250,7 +250,7 @@ controller:
               }
   sidecars:
     configAutoReload:
-      enabled: true
+      enabled: false
       image:
         registry: docker.io
         repository: kiwigrid/k8s-sidecar
