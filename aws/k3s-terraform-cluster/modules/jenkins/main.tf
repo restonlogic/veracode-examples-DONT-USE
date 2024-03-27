@@ -25,7 +25,6 @@ resource "local_file" "values" {
   filename = local.file_jenkins_values
 }
 
-#        helm upgrade --wait --install jenkins jenkinsci/jenkins --namespace jenkins --create-namespace --version 5.1.4 -f ${local_file.values.filename} &&
 resource "null_resource" "deploy" {
   triggers = {
     file_change  = md5(local_file.values.filename)
@@ -38,7 +37,7 @@ resource "null_resource" "deploy" {
     command = <<EOT
         helm repo add jenkins https://charts.jenkins.io > /dev/null &&
         helm repo update &&
-        helm upgrade --wait --install jenkins jenkinsci/jenkins --namespace jenkins --create-namespace --version 5.1.4 &&
+        helm upgrade --wait --install jenkins jenkins/jenkins --namespace jenkins --create-namespace --version 5.1.4 &&
         kubectl create clusterrolebinding jenkins-sa --clusterrole=cluster-admin --serviceaccount=jenkins:jenkins-sa --dry-run=client -o yaml | kubectl apply -f -
     EOT
   }
