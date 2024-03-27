@@ -9,10 +9,11 @@ controller:
   numExecutors: 6
   executorMode: "NORMAL"
   image: 
-    tag: "engrave/jenkins-veracode-example"
-    registry: docker.io
+    registry: "docker.io"
+    repository: "engrave/jenkins-veracode-example"
     tag: "latest"
-    pullPolicy: Always
+    tagLabel: "latest"
+    pullPolicy: "Always"
   admin:
     username: "admin"
     password: "${jenkins_admin_password}"
