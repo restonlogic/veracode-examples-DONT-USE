@@ -12,6 +12,7 @@ controller:
     tag: "engrave/jenkins-veracode-example"
     registry: docker.io
     tag: "latest"
+    pullPolicy: Always
   admin:
     username: "admin"
     password: "${jenkins_admin_password}"
@@ -268,7 +269,10 @@ controller:
         allowPrivilegeEscalation: true
     additionalSidecarContainers:
       - name: dind
-        image: docker:dind
+        image: 
+          registry: docker.io
+          repository: docker:dind
+          tag: latest
         securityContext:
           privileged: true
         resources:
