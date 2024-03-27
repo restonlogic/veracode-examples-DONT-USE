@@ -8,10 +8,14 @@ controller:
     allowPrivilegeEscalation: false
   numExecutors: 6
   executorMode: "NORMAL"
-  image: "engrave/jenkins-veracode-example"
-  tag: "latest"
-  adminSecret: true
-  adminPassword: "${jenkins_admin_password}"
+  image: 
+    tag: "engrave/jenkins-veracode-example"
+    registry: docker.io
+    tag: "latest"
+  admin:
+    username: "admin"
+    password: "${jenkins_admin_password}"
+    createSecret: true
   serviceType: NodePort
   servicePort: 80
   testEnabled: false
@@ -255,7 +259,6 @@ controller:
         registry: docker.io
         repository: "kiwigrid/k8s-sidecar"
         tag: 1.26.1
-      imagePullPolicy: IfNotPresent
       resources: {}
       reqRetryConnect: 10
       sshTcpPort: 1044
@@ -263,7 +266,7 @@ controller:
       containerSecurityContext:
         readOnlyRootFilesystem: false
         allowPrivilegeEscalation: true
-    other:
+    additionalSidecarContainers:
       - name: dind
         image: docker:dind
         securityContext:
