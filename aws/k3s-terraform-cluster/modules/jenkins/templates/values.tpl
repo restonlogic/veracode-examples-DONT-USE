@@ -249,20 +249,6 @@ controller:
                   }
               }
   sidecars:
-    configAutoReload:
-      enabled: false
-      image:
-        registry: docker.io
-        repository: kiwigrid/k8s-sidecar
-        tag: 1.26.1
-      imagePullPolicy: IfNotPresent
-      resources: {}
-      reqRetryConnect: 10
-      sshTcpPort: 1044
-      folder: "/var/jenkins_home/casc_configs"
-      containerSecurityContext:
-        readOnlyRootFilesystem: false
-        allowPrivilegeEscalation: true
     other:
       - name: dind
         image: docker:dind
