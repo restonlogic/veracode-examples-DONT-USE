@@ -18,6 +18,13 @@ controller:
     username: "admin"
     password: "${jenkins_admin_password}"
     createSecret: true
+  resources:
+    requests:
+      memory: "2048Mi"
+      cpu: "1"
+    limits:
+      memory: "4096Mi"
+      cpu: "2"
   serviceType: NodePort
   servicePort: 80
   testEnabled: false
@@ -30,13 +37,6 @@ controller:
     defaultCrumbIssuer:
       enabled: true
       proxyCompatibility: true
-  resources:
-    requests:
-      memory: "2048Mi"
-      cpu: "1"
-    limits:
-      memory: "4096Mi"
-      cpu: "2"
   authorizationStrategy:
     globalMatrix:
       permissions:
