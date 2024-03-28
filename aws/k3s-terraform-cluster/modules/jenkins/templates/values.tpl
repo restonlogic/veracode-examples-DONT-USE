@@ -32,10 +32,10 @@ controller:
       proxyCompatibility: true
   resources:
     requests:
-      memory: "1024Mi"
+      memory: "2048Mi"
       cpu: "1"
     limits:
-      memory: "2048Mi"
+      memory: "4096Mi"
       cpu: "2"
   authorizationStrategy:
     globalMatrix:
@@ -261,7 +261,13 @@ controller:
         registry: docker.io
         repository: "kiwigrid/k8s-sidecar"
         tag: 1.26.1
-      resources: {}
+      resources:
+        requests:
+          memory: "1024Mi"
+          cpu: "1"
+        limits:
+          memory: "2048Mi"
+          cpu: "2"
       reqRetryConnect: 10
       sshTcpPort: 1044
       folder: "/var/jenkins_home/casc_configs"
