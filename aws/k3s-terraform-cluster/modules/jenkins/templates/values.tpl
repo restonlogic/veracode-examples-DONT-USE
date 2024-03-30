@@ -10,7 +10,6 @@ controller:
   executorMode: "NORMAL"
   image: 
     registry: "docker.io"
-    repository: "engrave/jenkins-veracode-example"
     tag: "latest"
     tagLabel: "latest"
     pullPolicy: "Always"
