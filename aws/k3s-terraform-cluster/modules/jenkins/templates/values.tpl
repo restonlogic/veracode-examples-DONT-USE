@@ -243,9 +243,9 @@ controller:
         allowsSignup: false
         enableCaptcha: false
         users:
-        - id: "${chart-admin-username}"
-          name: "Jenkins Admin"
-          password: "${chart-admin-password}"
+        - id: admin
+          name: admin
+          password: "${jenkins_admin_password}"
 
     authorizationStrategy: |-
       loggedInUsersCanDoAnything:
