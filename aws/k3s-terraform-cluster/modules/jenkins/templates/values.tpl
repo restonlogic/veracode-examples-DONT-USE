@@ -92,8 +92,6 @@ controller:
   targetPort: 8080
   nodePort:
 
-  serviceExternalTrafficPolicy: Local
-
   healthProbes: true
 
   probes:
