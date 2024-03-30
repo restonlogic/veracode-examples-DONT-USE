@@ -21,7 +21,6 @@ controller:
     tagLabel: jdk17
     pullPolicy: "Always"
   imagePullSecretName:
-  lifecycle: {}
 
   disableRememberMe: false
 
@@ -29,7 +28,6 @@ controller:
 
   executorMode: "NORMAL"
 
-  customJenkinsLabels: []
 
   hostNetworking: false
 
@@ -54,45 +52,36 @@ controller:
 
   resources:
     requests:
-      cpu: "50m"
-      memory: "256Mi"
+      cpu: "1000m"
+      memory: "2048Mi"
     limits:
       cpu: "2000m"
       memory: "4096Mi"
 
   shareProcessNamespace: false
 
-  initContainerResources: {}
-  initContainerEnvFrom: []
-
-  initContainerEnv: []
-
-  containerEnvFrom: []
-
-  containerEnv: []
-
   javaOpts:
   jenkinsOpts:
 
   jenkinsUrlProtocol:
 
-  jenkinsUrl:
+  jenkinsUrl: ${jenkins_url}
 
-  jenkinsUriPrefix:
+  jenkinsUriPrefix: "/jenkins"
 
   usePodSecurityContext: true
 
-  runAsUser: 1000
+  runAsUser: 0
 
-  fsGroup: 1000
+  fsGroup: 0
 
   securityContextCapabilities: {}
 
   podSecurityContextOverride: ~
 
   containerSecurityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
+    runAsUser: 0
+    runAsGroup: 0
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
 
@@ -103,13 +92,7 @@ controller:
   targetPort: 8080
   nodePort:
 
-  serviceExternalTrafficPolicy:
-
-  serviceAnnotations: {}
-  statefulSetLabels: {}
-  serviceLabels: {}
-
-  podLabels: {}
+  serviceExternalTrafficPolicy: Local
 
   healthProbes: true
 
@@ -418,19 +401,6 @@ agent:
   restrictedPssSecurityContext: false
   podRetention: "Never"
   showRawYaml: true
-
-  volumes: []
-
-  workspaceVolume: {}
-
-  envVars: []
-  secretEnvVars: []
-
-  nodeSelector: {}
-
-  command:
-  args: "${computer.jnlpmac} ${computer.name}"
-  sideContainerName: "jnlp"
 
   TTYEnabled: false
   containerCap: 10
