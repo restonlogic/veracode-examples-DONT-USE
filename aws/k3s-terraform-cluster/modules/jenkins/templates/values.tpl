@@ -1,4 +1,3 @@
-
 nameOverride:
 fullnameOverride:
 namespaceOverride:
@@ -36,7 +35,7 @@ controller:
 
   admin:
 
-    username: "admin"
+    username: "testadmin"
     password:
 
     userKey: jenkins-admin-user
@@ -100,7 +99,7 @@ controller:
   serviceType: ClusterIP
 
   clusterIp:
-  servicePort: 8080
+  servicePort: 80
   targetPort: 8080
   nodePort:
 
@@ -522,4 +521,3 @@ helmtest:
       registry: "docker.io"
       repository: "bats/bats"
       tag: "1.11.0"
-
