@@ -38,9 +38,7 @@ resource "null_resource" "deploy" {
         helm repo add jenkins https://charts.jenkins.io > /dev/null &&
         helm repo update &&
         helm upgrade --wait --install jenkins jenkins/jenkins --namespace jenkins --create-namespace --version 5.1.4 -f ${local_file.values.filename} &&
-        kubectl create clusterrolebinding jenkins-sa --clusterrole=cluster-admin --serviceaccount=jenkins:jenkins-sa --dry-run=client -o yaml | kubectl apply -f - &&
-        sleep 30s &&
-        kubectl exec --namespace jenkins -it svc/myjenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+        kubectl create clusterrolebinding jenkins-sa --clusterrole=cluster-admin --serviceaccount=jenkins:jenkins-sa --dry-run=client -o yaml | kubectl apply -f - 
     EOT
   }
 }
