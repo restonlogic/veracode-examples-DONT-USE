@@ -172,12 +172,45 @@ controller:
     - workflow-aggregator:596.v8c21c963d92d
     - git:5.2.1
     - configuration-as-code:1775.v810dc950b_514
+    - blueocean:1.27.4
 
   installLatestPlugins: true
 
   installLatestSpecifiedPlugins: false
 
-  additionalPlugins: []
+  additionalPlugins:
+    - ansicolor:latest
+    - authorize-project:latest
+    - build-timeout:latest
+    - cloudbees-folder:latest
+    - credentials-binding:latest
+    - credentials:latest
+    - docker-workflow:1.26
+    - email-ext:latest
+    - envinject:latest
+    - environment-script:1.2.5
+    - github:latest
+    - job-dsl:latest
+    - matrix-auth:latest
+    - maven-plugin:3.16
+    - parameterized-scheduler:latest
+    - permissive-script-security:0.7
+    - pipeline-aws:latest
+    - pipeline-build-step:latest
+    - pipeline-model-definition:latest
+    - pipeline-stage-view:latest
+    - pipeline-utility-steps:latest
+    - rebuild:latest
+    - solarized-theme:0.1
+    - timestamper:latest
+    - workflow-cps-global-lib:latest
+    - workflow-job:latest
+    - ws-cleanup:latest
+    - prometheus:latest
+    - http_request:1.16
+    - durable-task:503.v57154d18d478
+    - veracode-scan:22.6.18.0
+    - servicenow-devops:1.38.0
 
   initializeOnce: false
 
