@@ -89,7 +89,7 @@ controller:
 
   clusterIp:
   servicePort: 80
-  targetPort: 8080
+  targetPort: 80
   nodePort:
 
   healthProbes: true
@@ -244,7 +244,167 @@ controller:
 
     overwriteConfiguration: false
     configUrls: []
-    configScripts: {}
+    configScripts: 
+      welcome-message: |-
+        jenkins:
+          systemMessage: "Welcome to the Veracode K3s Microservices Demo!"
+
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                - usernamePassword:
+                    description: "git-creds"
+                    id: "git-creds"
+                    scope: GLOBAL
+                    password: ${git_access_token}
+                    username: ${git_username}
+                - string:
+                    scope: GLOBAL
+                    id: "gitops-address"
+                    secret: ${gitops_address}
+                    description: "gitops address"
+                - string:
+                    scope: GLOBAL
+                    id: "gitops-org"
+                    secret: ${gitops_org}
+                    description: "gitops org"
+                - string:
+                    scope: GLOBAL
+                    id: "gitops-repo"
+                    secret: ${gitops_repo}
+                    description: "gitops repo"
+                - string:
+                    scope: GLOBAL
+                    id: "gitops-branch"
+                    secret: ${gitops_branch}
+                    description: "gitops branch"
+                - string:
+                    scope: GLOBAL
+                    id: "gitops_full_url"
+                    secret: "${gitops_full_url}"
+                    description: "gitops full url"
+                - string:
+                    scope: GLOBAL
+                    id: "gitops-org-url"
+                    secret: "${gitops_org_url}"
+                    description: "gitops org url"
+                - string:
+                    scope: GLOBAL
+                    id: "snow-url"
+                    secret: "${snow_url}"
+                    description: "service now url"
+                - string:
+                    scope: GLOBAL
+                    id: "snow-usr"
+                    secret: "${snow_usr}"
+                    description: "service now user"
+                - string:
+                    scope: GLOBAL
+                    id: "snow-pwd"
+                    secret: "${snow_pwd}"
+                    description: "service now password"
+
+        security:
+          globaljobdslsecurityconfiguration:
+            useScriptSecurity: false
+
+        unclassified:
+          globalLibraries:
+            libraries:
+              - name: "jenkins-library"
+                allowVersionOverride: true
+                defaultVersion: "main"
+                implicit: true
+                retriever:
+                  modernSCM:
+                    scm:
+                      git:
+                        id: 'jenkins-library'
+                        remote: "${gitops_full_url}"
+                        credentialsId: 'git-creds'
+
+        jobs:
+          - script: >
+              pipelineJob("set-folders") {
+                  description("Pipeline Job for setting the folder structure of the Jenkins server")
+                  definition {
+                      cpsScm {
+                          scm {
+                              git {
+                                  branch("main")
+                                  remote {
+                                      credentials("git-creds")
+                                      url("${gitops_full_url}")
+                                  }
+                              }
+                              scriptPath("aws/k3s-terraform-cluster/pipelines-as-code/jenkins/bootstrap/set-folders/Jenkinsfile.groovy")
+                          }
+                      }
+                  }
+              }
+          - script: >
+              job("single-seed-job") {
+                  description("Freestyle Job that builds a single other job")
+                  parameters {
+                      stringParam("job_dsl_path", "", "Location of Job DSL script")
+                  }
+                  concurrentBuild(true)
+                  scm {
+                      git {
+                          branch("main")
+                          remote {
+                              credentials("git-creds")
+                              url("${gitops_full_url}")
+                          }
+                      }
+                  }
+                  steps {
+                      dsl {
+                          external("\$job_dsl_path")
+                      }
+                  }
+              }
+          - script: >
+              job("seed-job") {
+                  description("Freestyle Job that builds other jobs")
+                  concurrentBuild(false)
+                  scm {
+                      git {
+                          branch("main")
+                          remote {
+                              credentials("git-creds")
+                              url("${gitops_full_url}")
+                          }
+                      }
+                  }
+                  steps {
+                      dsl {
+                          external("**/job_dsl.groovy")
+                      }
+                  }
+              }
+          - script: >
+              pipelineJob("bootstrap-pipeline-job") {
+                  description("Pipeline Job for initializing the Jenkins server, this job triggers when Jenkins spins up for the first time and when there is changes to the pipelines directory.")
+                  triggers {
+                        scm('* * * * *')
+                  }
+                  definition {
+                      cpsScm {
+                          scm {
+                              git {
+                                  branch("main")
+                                  remote {
+                                      credentials("git-creds")
+                                      url("${gitops_full_url}")
+                                  }
+                              }
+                              scriptPath("aws/k3s-terraform-cluster/pipelines-as-code/jenkins/bootstrap/init/Jenkinsfile.groovy")
+                          }
+                      }
+                  }
+              }
 
     security:
       apiToken:
@@ -394,7 +554,7 @@ agent:
   enabled: true
   defaultsProviderTemplate: ""
 
-  jenkinsUrl:
+  jenkinsUrl: ${jenkins_url}
 
   jenkinsTunnel:
   kubernetesConnectTimeout: 5
