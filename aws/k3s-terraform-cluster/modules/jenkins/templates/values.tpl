@@ -469,7 +469,10 @@ controller:
   updateStrategy: {}
 
   ingress:
-    enabled: false
+    enabled: true
+    apiVersion: "networking.k8s.io/v1"
+    ingressClassName: nginx
+    path: "/jenkins"
 
     paths: []
 
