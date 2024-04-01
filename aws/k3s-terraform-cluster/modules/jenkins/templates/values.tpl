@@ -33,15 +33,11 @@ controller:
 
   admin:
 
-    username: "testadmin"
-    password:
-
-    userKey: jenkins-admin-user
-    passwordKey: jenkins-admin-password
+    username: "admin"
+    password: "${jenkins_admin_password}"
 
     createSecret: true
 
-    existingSecret: ""
   jenkinsAdminEmail:
 
   jenkinsHome: "/var/jenkins_home"
