@@ -35,10 +35,10 @@ resource "null_resource" "deploy" {
       KUBECONFIG = "/tmp/k3s_kubeconfig"
     }
     command = <<EOT
+        kubectl create clusterrolebinding jenkins-sa --clusterrole=cluster-admin --serviceaccount=jenkins:jenkins-sa --dry-run=client -o yaml | kubectl apply -f -  &&
         helm repo add jenkins https://charts.jenkins.io > /dev/null &&
         helm repo update &&
-        helm upgrade --wait --install jenkins jenkins/jenkins --namespace jenkins --create-namespace --version 5.1.4 -f ${local_file.values.filename} &&
-        kubectl create clusterrolebinding jenkins-sa --clusterrole=cluster-admin --serviceaccount=jenkins:jenkins-sa --dry-run=client -o yaml | kubectl apply -f - 
+        helm upgrade --wait --install jenkins jenkins/jenkins --namespace jenkins --create-namespace --version 5.1.4 -f ${local_file.values.filename}
     EOT
   }
 }
