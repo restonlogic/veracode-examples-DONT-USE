@@ -102,22 +102,20 @@ controller:
     livenessProbe:
       failureThreshold: 5
       httpGet:
-        path: '{{ default "" .Values.controller.jenkinsUriPrefix }}/login'
-        port: http
+        path: '/jenkins/login'
+        port: 80
+      initialDelaySeconds: 90
       periodSeconds: 10
       timeoutSeconds: 5
-
-      initialDelaySeconds:
 
     readinessProbe:
       failureThreshold: 3
       httpGet:
-        path: '{{ default "" .Values.controller.jenkinsUriPrefix }}/login'
-        port: http
+        path: "/jenkins/login"
+        port: 80
+      initialDelaySeconds: 60
       periodSeconds: 10
       timeoutSeconds: 5
-
-      initialDelaySeconds:
 
   podDisruptionBudget:
 
@@ -620,11 +618,11 @@ persistence:
 
   existingClaim:
 
-  storageClass:
+  storageClass: efs-sc
   annotations: {}
   labels: {}
-  accessMode: "ReadWriteOnce"
-  size: "8Gi"
+  accessMode: "ReadWriteMany"
+  size: "100Gi"
 
   dataSource: {}
 
@@ -651,8 +649,8 @@ rbac:
 
 serviceAccount:
   create: true
+  name: "jenkins-sa"
 
-  name:
   annotations: {}
   extraLabels: {}
   imagePullSecretName:
