@@ -521,7 +521,8 @@ controller:
     # -- Jenkins Config as Code Security Realm-section
     securityRealm: |-
       local:
-      allowsSignup: false
+        allowsSignup: false
+        enableCaptcha: false
       users:
         - id: admin
           name: admin
