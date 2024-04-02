@@ -27,8 +27,8 @@ module "veracode_secrets" {
   source      = "../modules/secrets-manager-secret"
   secret_name = "/${var.global_config.name}/${var.global_config.environment}/veracode-secrets"
   secret_string = jsonencode({
-    veracode-api-id        = var.veracode_api_id
-    veracode-api-key       = var.veracode_api_key
+    veracode-api-id  = var.veracode_api_id
+    veracode-api-key = var.veracode_api_key
   })
 }
 
@@ -36,22 +36,22 @@ module "snow_secrets" {
   source      = "../modules/secrets-manager-secret"
   secret_name = "/${var.global_config.name}/${var.global_config.environment}/snow-secrets"
   secret_string = jsonencode({
-    snow-url   = var.snow_url
-    snow-usr   = var.snow_usr
-    snow-pwd   = var.snow_pwd
+    snow-url = var.snow_url
+    snow-usr = var.snow_usr
+    snow-pwd = var.snow_pwd
   })
 }
 
-resource "random_password" "jenkins_admin_password" {
-  length  = 16
-  special = false
-}
+# resource "random_password" "jenkins_admin_password" {
+#   length  = 16
+#   special = false
+# }
 
-module "jenkins_secrets" {
-  source      = "../modules/secrets-manager-secret"
-  secret_name = "/${var.global_config.name}/${var.global_config.environment}/jenkins-secrets"
-  secret_string = jsonencode({
-    username               = "admin"
-    jenkins-admin-password = random_password.jenkins_admin_password.result
-  })
-}
+# module "jenkins_secrets" {
+#   source      = "../modules/secrets-manager-secret"
+#   secret_name = "/${var.global_config.name}/${var.global_config.environment}/jenkins-secrets"
+#   secret_string = jsonencode({
+#     username               = "admin"
+#     jenkins-admin-password = random_password.jenkins_admin_password.result
+#   })
+# }

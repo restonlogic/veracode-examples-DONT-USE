@@ -12,6 +12,9 @@
     "gitops_repo": "veracode-examples",
     "gitops_branch": "main"
   },
+  "github_actions": {
+    "action": "apply"
+  },
   "microservices": [
     "counter-service"
   ],

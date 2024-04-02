@@ -16,11 +16,11 @@ module "skooner" {
   depends_on = [module.cluster_autoscaler]
 }
 
-module "jenkins" {
-  source = "../modules/jenkins"
+# module "jenkins" {
+#   source = "../modules/jenkins"
 
-  global_config = var.global_config
-  git_config    = var.git_config
+#   global_config = var.global_config
+#   git_config    = var.git_config
 
-  depends_on = [module.cluster_autoscaler]
-}
+#   depends_on = [module.cluster_autoscaler]
+# }

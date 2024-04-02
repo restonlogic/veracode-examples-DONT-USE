@@ -1,0 +1,45 @@
+name: backend-pipeline
+# Run workflow only when committing to frontend directory
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "aws/k3s-terraform-cluster/microservices/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    # The image this workflow works on
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Github Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::972962050678:role/GitHubAction-Falcon-AssumeRoleWithAction"
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Export Variables
+        run: |
+          echo "AWS_REGION=$(jq '.global_config.region' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
+          echo "ACTION=$(jq '.github_actions.action' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
+          echo "NAME=$(jq '.global_config.name' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
+          echo "ENVIRONMENT=$(jq '.global_config.environment' -r ./aws/k3s-terraform-cluster/environment/manifest.json)" >> $GITHUB_ENV
+          echo "image=counter-service"
+          echo "build_tag=$(git rev-parse --short HEAD)
+          echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION")
+          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$env --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')
+
+      - name: Get Secrets by Name and by ARN
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            /$NAME/$ENVIRONMENT/veracode-secrets
+          parse-json-secrets: true

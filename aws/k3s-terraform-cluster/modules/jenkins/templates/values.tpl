@@ -8,11 +8,14 @@ controller:
     allowPrivilegeEscalation: false
   numExecutors: 6
   executorMode: "NORMAL"
-  image: 
+  image:
+    componentName: "jenkins-controller"
     registry: "docker.io"
-    tag: "latest"
-    tagLabel: "latest"
+    repository: "jenkins/jenkins"
+    tag:
+    tagLabel: jdk17
     pullPolicy: "Always"
+  imagePullSecretName:
   admin:
     username: "admin"
     password: "${jenkins_admin_password}"
