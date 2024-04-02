@@ -60,3 +60,22 @@ jobs:
           k3s_kubeconfig=/tmp/k3s_kubeconfig
           aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENV}-${ORG}-${ENV}-v2 --region $AWS_REGION | jq -r '.SecretString' > $k3s_kubeconfig
           export KUBECONFIG=$k3s_kubeconfig
+
+      - name: ZIP source folder
+        run: |
+          pwd
+          cd ../microservices/$image"
+          zip -r app.zip app
+
+      - name: Run Veracode Static Code Analysis
+        uses: veracode/veracode-uploadandscan-action@0.2.6
+        with:
+          appname: $image
+          version: "${image}-build-${build_tag}"
+          createprofile: true
+          filepath: "app.zip"
+          scantimeout: 30
+          criticality: medium
+          debug: true
+          vid: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_ID
+          vkey: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_KEY
