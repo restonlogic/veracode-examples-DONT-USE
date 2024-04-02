@@ -26,8 +26,8 @@ jobs:
           echo "ACTION=$(jq '.github_actions.action' -r manifest.json)" >> $GITHUB_ENV
           echo "NAME=$(jq '.global_config.name' -r manifest.json)" >> $GITHUB_ENV
           echo "ENV=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
-          echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
           echo "ORG=$(jq '.global_config.organization' -r manifest.json)" >> $GITHUB_ENV
+          echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -46,15 +46,14 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            /$NAME/$ENV/veracode-secrets
+            /veracode/mgmt/veracode-secrets
           parse-json-secrets: true
 
       - name: Get ECR Repo URL
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            /$NAME/$ENV/ecr-repo/$image
-          parse-json-secrets: true
+            /veracode/mgmt/ecr-repo/counter-service
 
       - name: Get Kubeconfig
         run: |
