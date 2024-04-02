@@ -25,8 +25,9 @@ jobs:
           cd aws/k3s-terraform-cluster
           echo "ACTION=$(jq '.github_actions.action' -r manifest.json)" >> $GITHUB_ENV
           echo "NAME=$(jq '.global_config.name' -r manifest.json)" >> $GITHUB_ENV
-          echo "ENVIRONMENT=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
+          echo "ENV=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
           echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
+          echo "ORG=$(jq '.global_config.organization' -r manifest.json)" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -41,9 +42,22 @@ jobs:
           echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"
           echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$env --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')"
 
-      - name: Get Secrets by Name and by ARN
+      - name: Get Veracode Secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            /$NAME/$ENVIRONMENT/veracode-secrets
+            /$NAME/$ENV/veracode-secrets
           parse-json-secrets: true
+
+      - name: Get ECR Repo URL
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            /$NAME/$ENV/ecr-repo/$image
+          parse-json-secrets: true
+
+      - name: Get Kubeconfig
+        run: |
+          k3s_kubeconfig=/tmp/k3s_kubeconfig
+          aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENV}-${ORG}-${ENV}-v2 --region $AWS_REGION | jq -r '.SecretString' > $k3s_kubeconfig
+          export KUBECONFIG=$k3s_kubeconfig
