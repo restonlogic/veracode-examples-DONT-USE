@@ -64,7 +64,7 @@ jobs:
       - name: ZIP source folder
         run: |
           pwd
-          cd ../microservices/$image"
+          cd ../microservices/$image
           zip -r app.zip app
 
       - name: Run Veracode Static Code Analysis
