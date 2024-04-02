@@ -32,7 +32,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::972962050678:role/GitHubAction-Falcon-AssumeRoleWithAction"
-          aws-region: ${{ AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Export Variables
         run: |
