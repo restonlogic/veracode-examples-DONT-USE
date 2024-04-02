@@ -523,7 +523,7 @@ controller:
       local:
         allowsSignup: false
         enableCaptcha: false
-      users:
+        users:
         - id: admin
           name: admin
           password: "${jenkins_admin_password}"
