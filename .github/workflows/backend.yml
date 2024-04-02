@@ -22,9 +22,7 @@ jobs:
 
       - name: Export Variables
         run: |
-          pwd
-          ls -l
-          cd veracode-examples/aws/k3s-cluster
+          cd aws/k3s-cluster
           echo "ACTION=$(jq '.github_actions.action' -r manifest.json)" >> $GITHUB_ENV
           echo "NAME=$(jq '.global_config.name' -r manifest.json)" >> $GITHUB_ENV
           echo "ENVIRONMENT=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
