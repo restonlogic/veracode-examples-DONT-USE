@@ -1048,7 +1048,7 @@ agent:
   # -- Command to execute when side container starts
   command:
   # -- Arguments passed to command to execute
-  args: "${computer.jnlpmac} ${computer.name}"
+  args: "localhost"
   # -- Side container name
   sideContainerName: "jnlp"
 
