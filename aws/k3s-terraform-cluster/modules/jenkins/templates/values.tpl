@@ -448,10 +448,10 @@ controller:
   # 'name' is a name of an existing secret in the same namespace as jenkins,
   # 'keyName' is the name of one of the keys inside the current secret.
   # the 'name' and 'keyName' are concatenated with a '-' in between, so for example:
-  # an existing secret "secret-credentials" and a key inside it named "github-password" should be used in JCasC as ${secret-credentials-github-password}
+  # an existing secret "secret-credentials" and a key inside it named "github-password" should be used in JCasC as secret-credentials-github-password
   # 'name' and 'keyName' must be lowercase RFC 1123 label must consist of lower case alphanumeric characters or '-',
   # and must start and end with an alphanumeric character (e.g. 'my-name', or '123-abc')
-  # existingSecret existing secret "secret-credentials" and a key inside it named "github-username" should be used in JCasC as ${github-username}
+  # existingSecret existing secret "secret-credentials" and a key inside it named "github-username" should be used in JCasC as github-username
   # When using existingSecret no need to specify the keyName under additionalExistingSecrets.
   existingSecret:
 
