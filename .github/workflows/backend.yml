@@ -20,18 +20,20 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
+      - name: Export Variables
+        run: |
+          echo "ACTION=$(jq '.github_actions.action' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
+          echo "NAME=$(jq '.global_config.name' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
+          echo "ENVIRONMENT=$(jq '.global_config.environment' -r ./aws/k3s-terraform-cluster/environment/manifest.json)" >> $GITHUB_ENV
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::972962050678:role/GitHubAction-Falcon-AssumeRoleWithAction"
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: "us-east-1"
 
       - name: Export Variables
         run: |
-          echo "AWS_REGION=$(jq '.global_config.region' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
-          echo "ACTION=$(jq '.github_actions.action' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
-          echo "NAME=$(jq '.global_config.name' -r ./aws/k3s-terraform-cluster/manifest.json)" >> $GITHUB_ENV
-          echo "ENVIRONMENT=$(jq '.global_config.environment' -r ./aws/k3s-terraform-cluster/environment/manifest.json)" >> $GITHUB_ENV
           echo "image=counter-service"
           echo "build_tag=$(git rev-parse --short HEAD)
           echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION")
