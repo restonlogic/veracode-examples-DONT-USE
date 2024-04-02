@@ -37,9 +37,9 @@ jobs:
       - name: Export Variables
         run: |
           echo "image=counter-service"
-          echo "build_tag=$(git rev-parse --short HEAD)
-          echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION")
-          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$env --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')
+          echo "build_tag=$(git rev-parse --short HEAD)"
+          echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"
+          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$env --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')"
 
       - name: Get Secrets by Name and by ARN
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
