@@ -26,7 +26,7 @@ jobs:
           echo "ACTION=$(jq '.github_actions.action' -r manifest.json)" >> $GITHUB_ENV
           echo "NAME=$(jq '.global_config.name' -r manifest.json)" >> $GITHUB_ENV
           echo "ENVIRONMENT=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
-          echo "AWS_REGION="$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
+          echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
