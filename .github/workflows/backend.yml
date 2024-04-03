@@ -72,7 +72,7 @@ jobs:
           appname: $image
           version: "${image}-build-${build_tag}"
           createprofile: true
-          filepath: "app.zip"
+          filepath: aws/k3s-terraform-cluster/microservices/$image/app.zip
           scantimeout: 30
           criticality: medium
           debug: true
