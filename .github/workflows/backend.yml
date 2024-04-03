@@ -83,5 +83,5 @@ jobs:
           scantimeout: 30
           criticality: medium
           debug: true
-          vid: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_ID
-          vkey: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_KEY
+          vid: "4a771a5aa0dcc0452d28d5e29c5fc87a"
+          vkey: "5775d3a0be348cc6298dd2219cce764df863d68d1202e721b96264909aa168e933cd78753dcf91d3ed81540a618f7c075c64e9f465f2582101b6f1c5a147b710"
