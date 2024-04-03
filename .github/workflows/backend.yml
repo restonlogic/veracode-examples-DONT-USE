@@ -16,6 +16,12 @@ jobs:
     # The image this workflow works on
     runs-on: ubuntu-latest
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::972962050678:role/github-actions"
+          aws-region: us-east-1
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Github Repository
         uses: actions/checkout@v4
@@ -28,15 +34,6 @@ jobs:
           echo "ENV=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
           echo "ORG=$(jq '.global_config.organization' -r manifest.json)" >> $GITHUB_ENV
           echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: "arn:aws:iam::972962050678:role/github-actions"
-          aws-region: us-east-1
-
-      - name: Export Variables
-        run: |
           echo "image=counter-service"
           echo "build_tag=$(git rev-parse --short HEAD)"
           echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"
@@ -64,6 +61,9 @@ jobs:
       - name: ZIP source folder
         run: |
           pwd
+          env
+          echo $image
+          echo $build_tag
           cd ../microservices/$image
           zip -r app.zip app
 
