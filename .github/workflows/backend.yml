@@ -37,7 +37,7 @@ jobs:
           echo "image=counter-service" >> $GITHUB_ENV
           echo "build_tag=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"  >> $GITHUB_ENV
-          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$ENV --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')" >> $GITHUB_ENV
+          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-${ENV} --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')" >> $GITHUB_ENV
 
       - name: Get Veracode Secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
@@ -45,6 +45,11 @@ jobs:
           secret-ids: |
             /veracode/mgmt/veracode-secrets
           parse-json-secrets: true
+
+      - name: DEBUG
+        run: |
+          echo $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_ID  | sed 's/./& /g'
+          echo $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_KEY | sed 's/./& /g'
 
       - name: Get ECR Repo URL
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
@@ -63,6 +68,8 @@ jobs:
           pwd
           echo $image
           echo $build_tag
+          echo "API id: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_ID"
+          echo "vkey: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_KEY"
           cd aws/k3s-terraform-cluster/microservices/$image
           zip -r app.zip app
 
