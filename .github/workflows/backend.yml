@@ -34,10 +34,10 @@ jobs:
           echo "ENV=$(jq '.global_config.environment' -r manifest.json)" >> $GITHUB_ENV
           echo "ORG=$(jq '.global_config.organization' -r manifest.json)" >> $GITHUB_ENV
           echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
-          echo "image=counter-service"
-          echo "build_tag=$(git rev-parse --short HEAD)"
-          echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"
-          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$env --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')"
+          echo "image=counter-service" >> $GITHUB_ENV
+          echo "build_tag=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"  >> $GITHUB_ENV
+          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-$ENV --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')" >> $GITHUB_ENV
 
       - name: Get Veracode Secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
@@ -56,15 +56,14 @@ jobs:
         run: |
           k3s_kubeconfig=/tmp/k3s_kubeconfig
           aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENV}-${ORG}-${ENV}-v2 --region $AWS_REGION | jq -r '.SecretString' > $k3s_kubeconfig
-          export KUBECONFIG=$k3s_kubeconfig
+          echo "KUBECONFIG=$k3s_kubeconfig" >> $GITHUB_ENV
 
       - name: ZIP source folder
         run: |
           pwd
-          env
           echo $image
           echo $build_tag
-          cd ../microservices/$image
+          cd aws/k3s-terraform-cluster/microservices/$image
           zip -r app.zip app
 
       - name: Run Veracode Static Code Analysis
