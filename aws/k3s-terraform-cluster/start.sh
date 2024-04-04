@@ -258,18 +258,18 @@ fi
 
 if [ $action = "destroy" ]; then
 
-    # # Destroy K3s Cluster
-    # cd ${PWD}/k3s_cluster
-    # bash ./run.sh $action
-    # cd ..
-
-    # # Destroy Network
-    # cd ${PWD}/network_services
-    # bash ./run.sh $action
-    # cd ..
-
-    # Destroy Secrets
-    cd ${PWD}/secret_services
+    # Destroy K3s Cluster
+    cd ${PWD}/k3s_cluster
     bash ./run.sh $action
     cd ..
+
+    # Destroy Network
+    cd ${PWD}/network_services
+    bash ./run.sh $action
+    cd ..
+
+    # # Destroy Secrets
+    # cd ${PWD}/secret_services
+    # bash ./run.sh $action
+    # cd ..
 fi
