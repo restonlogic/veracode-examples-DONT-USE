@@ -19,7 +19,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.GA_IAM_ROLE_TO_ASSUME }}
+          role-to-assume: "arn:aws:iam::972962050678:role/github-actions"
           aws-region: us-east-1
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
