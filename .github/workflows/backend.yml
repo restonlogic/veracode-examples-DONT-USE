@@ -19,7 +19,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: "arn:aws:iam::972962050678:role/github-actions"
+          role-to-assume: ${{ secrets.GA_IAM_ROLE_TO_ASSUME }}
           aws-region: us-east-1
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -36,40 +36,38 @@ jobs:
           echo "AWS_REGION=$(jq '.global_config.region' -r manifest.json)" >> $GITHUB_ENV
           echo "image=counter-service" >> $GITHUB_ENV
           echo "build_tag=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"  >> $GITHUB_ENV
-          echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-${ENV} --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')" >> $GITHUB_ENV
+          #echo "ecr_password=$(aws ecr get-login-password --region $AWS_REGION)"  >> $GITHUB_ENV
+          #echo "ext_lb_dns=$(aws elbv2 describe-load-balancers --names k3s-ext-lb-${ENV} --region $AWS_REGION | jq -r '.LoadBalancers[].DNSName')" >> $GITHUB_ENV
 
-      - name: Get Veracode Secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            /veracode/mgmt/veracode-secrets
-          parse-json-secrets: true
+      # - name: Get Veracode Secrets
+      #   uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      #   with:
+      #     secret-ids: |
+      #       /veracode/mgmt/veracode-secrets
+      #     parse-json-secrets: true
 
       - name: DEBUG
         run: |
-          echo $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_ID  | sed 's/./& /g'
-          echo $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_KEY | sed 's/./& /g'
+          echo ${{ secrets.VERACODE_API_ID }}  | sed 's/./& /g'
+          echo ${{ secrets.VERACODE_API_KEY }} | sed 's/./& /g'
 
-      - name: Get ECR Repo URL
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            /veracode/mgmt/ecr-repo/counter-service
+      # - name: Get ECR Repo URL
+      #   uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      #   with:
+      #     secret-ids: |
+      #       /veracode/mgmt/ecr-repo/counter-service
 
-      - name: Get Kubeconfig
-        run: |
-          k3s_kubeconfig=/tmp/k3s_kubeconfig
-          aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENV}-${ORG}-${ENV}-v2 --region $AWS_REGION | jq -r '.SecretString' > $k3s_kubeconfig
-          echo "KUBECONFIG=$k3s_kubeconfig" >> $GITHUB_ENV
+      # - name: Get Kubeconfig
+      #   run: |
+      #     k3s_kubeconfig=/tmp/k3s_kubeconfig
+      #     aws secretsmanager get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENV}-${ORG}-${ENV}-v2 --region $AWS_REGION | jq -r '.SecretString' > $k3s_kubeconfig
+      #     echo "KUBECONFIG=$k3s_kubeconfig" >> $GITHUB_ENV
 
       - name: ZIP source folder
         run: |
           pwd
           echo $image
           echo $build_tag
-          echo "API id: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_ID"
-          echo "vkey: $_VERACODE_MGMT_VERACODE_SECRETS_VERACODE_API_KEY"
           cd aws/k3s-terraform-cluster/microservices/$image
           zip -r app.zip app
 
@@ -83,5 +81,5 @@ jobs:
           scantimeout: 30
           criticality: medium
           debug: true
-          vid: "4a771a5aa0dcc0452d28d5e29c5fc87a"
-          vkey: "5775d3a0be348cc6298dd2219cce764df863d68d1202e721b96264909aa168e933cd78753dcf91d3ed81540a618f7c075c64e9f465f2582101b6f1c5a147b710"
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
