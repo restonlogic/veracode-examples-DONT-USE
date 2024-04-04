@@ -217,56 +217,56 @@ if [ $action = "apply" ]; then
     bash ./run.sh $action $git_user $git_token $veracode_api_id $veracode_api_key $service_now_url $service_now_usr $service_now_pwd
     cd ..
 
-    # Create Network
-    cd ${PWD}/network_services
-    bash ./run.sh $action
-    cd ..
+    # # Create Network
+    # cd ${PWD}/network_services
+    # bash ./run.sh $action
+    # cd ..
     
-    # Create K3s Cluster
-    cd ${PWD}/k3s_cluster
-    bash ./run.sh $action
-    cd ..
+    # # Create K3s Cluster
+    # cd ${PWD}/k3s_cluster
+    # bash ./run.sh $action
+    # cd ..
 
-    k3s_kubeconfig=/tmp/k3s_kubeconfig
-    i=0
-    while [ $i = 0 ]; do
-        secret=$(aws secretsmanager --region $REGION list-secret-version-ids --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.Versions[]')
-        if [[ -z $secret ]]; then
-            printf "${BBLUE}Waiting for K3s Kubeconfig to be added to secrets manager. Sleeping for 5 seconds.${NC}\n"
-            sleep 5s
-        else
-            printf "${GREEN}K3s Kubeconfig has been added to secrets manager successfully!${NC}\n"
-            aws secretsmanager --region $REGION get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
-            ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
-            k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
-            yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
-            chmod og-rw /tmp/k3s_kubeconfig
-            export KUBECONFIG=$k3s_kubeconfig
-            i=1
-        fi
-    done
+    # k3s_kubeconfig=/tmp/k3s_kubeconfig
+    # i=0
+    # while [ $i = 0 ]; do
+    #     secret=$(aws secretsmanager --region $REGION list-secret-version-ids --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.Versions[]')
+    #     if [[ -z $secret ]]; then
+    #         printf "${BBLUE}Waiting for K3s Kubeconfig to be added to secrets manager. Sleeping for 5 seconds.${NC}\n"
+    #         sleep 5s
+    #     else
+    #         printf "${GREEN}K3s Kubeconfig has been added to secrets manager successfully!${NC}\n"
+    #         aws secretsmanager --region $REGION get-secret-value --secret-id k3s-kubeconfig-${NAME}-${ENVIRONMENT}-${ORG}-${ENVIRONMENT}-v2 | jq -r '.SecretString' > $k3s_kubeconfig
+    #         ext_lb_dns=$(aws elbv2 describe-load-balancers --names "k3s-ext-lb-$ENVIRONMENT" | jq -r '.LoadBalancers[].DNSName')
+    #         k3s_ext_lb_dns=$(echo https://${ext_lb_dns}:6443)
+    #         yq -i -e ".clusters[].cluster.server = \"$k3s_ext_lb_dns\"" /tmp/k3s_kubeconfig
+    #         chmod og-rw /tmp/k3s_kubeconfig
+    #         export KUBECONFIG=$k3s_kubeconfig
+    #         i=1
+    #     fi
+    # done
 
-    cd ${PWD}/k3s_services
-    bash ./run.sh $action
-    cd ..
+    # cd ${PWD}/k3s_services
+    # bash ./run.sh $action
+    # cd ..
 
-    printf "${GREEN}Infrastructure has been successfully setup${NC}\n"
+    # printf "${GREEN}Infrastructure has been successfully setup${NC}\n"
 
-    bash ./get-endpoints.sh
+    # bash ./get-endpoints.sh
 
 fi
 
 if [ $action = "destroy" ]; then
 
-    # Destroy K3s Cluster
-    cd ${PWD}/k3s_cluster
-    bash ./run.sh $action
-    cd ..
+    # # Destroy K3s Cluster
+    # cd ${PWD}/k3s_cluster
+    # bash ./run.sh $action
+    # cd ..
 
-    # Destroy Network
-    cd ${PWD}/network_services
-    bash ./run.sh $action
-    cd ..
+    # # Destroy Network
+    # cd ${PWD}/network_services
+    # bash ./run.sh $action
+    # cd ..
 
     # Destroy Secrets
     cd ${PWD}/secret_services
