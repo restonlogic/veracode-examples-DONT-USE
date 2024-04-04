@@ -49,8 +49,8 @@ jobs:
 
       - name: DEBUG
         run: |
-          echo ${{ secrets.VERACODE_API_ID }}  | sed 's/./& /g'
-          echo ${{ secrets.VERACODE_API_KEY }} | sed 's/./& /g'
+          echo ${{ secrets.VERACODE_API_ID }}  | sed 's/./&/g'
+          echo ${{ secrets.VERACODE_API_KEY }} | sed 's/./&/g'
 
       # - name: Get ECR Repo URL
       #   uses: aws-actions/aws-secretsmanager-get-secrets@v2
