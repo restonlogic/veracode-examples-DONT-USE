@@ -49,8 +49,8 @@ jobs:
 
       - name: DEBUG
         run: |
-          echo ${{ secrets.VERACODE_API_ID }}  | sed 's/./&/g'
-          echo ${{ secrets.VERACODE_API_KEY }} | sed 's/./&/g'
+          echo ${{ secrets.VERACODE_API_ID }}  | sed 's/./& /g'
+          echo ${{ secrets.VERACODE_API_KEY }} | sed 's/./& /g'
 
       # - name: Get ECR Repo URL
       #   uses: aws-actions/aws-secretsmanager-get-secrets@v2
@@ -72,13 +72,18 @@ jobs:
           cd aws/k3s-terraform-cluster/microservices/$image
           zip -r app.zip app
 
+      - name: DEBUG2
+        run: |
+          echo ${image}-build-${build_tag}
+          ls aws/k3s-terraform-cluster/microservices/${image}/app.zip
+
       - name: Run Veracode Static Code Analysis
         uses: veracode/veracode-uploadandscan-action@0.2.6
         with:
           appname: $image
-          version: "${image}-build-${build_tag}"
+          version: ${image}-build-${build_tag}
           createprofile: true
-          filepath: aws/k3s-terraform-cluster/microservices/$image/app.zip
+          filepath: aws/k3s-terraform-cluster/microservices/${image}/app.zip
           scantimeout: 30
           criticality: medium
           debug: true
