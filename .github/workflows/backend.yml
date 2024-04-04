@@ -47,7 +47,7 @@ jobs:
       #       /veracode/mgmt/veracode-secrets
       #     parse-json-secrets: true
 
-      - name: DEBUG
+      - name: DEBUG2
         run: |
           echo ${{ secrets.VERACODE_API_ID }}  | sed 's/./& /g'
           echo ${{ secrets.VERACODE_API_KEY }} | sed 's/./& /g'
@@ -72,7 +72,7 @@ jobs:
           cd aws/k3s-terraform-cluster/microservices/$image
           zip -r app.zip app
 
-      - name: DEBUG2
+      - name: DEBUG3
         run: |
           echo ${image}-build-${build_tag}
           ls aws/k3s-terraform-cluster/microservices/${image}/app.zip
